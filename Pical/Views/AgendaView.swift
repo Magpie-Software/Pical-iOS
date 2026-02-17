@@ -35,7 +35,7 @@ struct AgendaView: View {
             .sheet(item: $editor) { editor in
                 EventEditorView(
                     event: editor.event,
-                    mode: editor.mode,
+                    mode: editor.mode.editorMode,
                     onSave: { updated in
                         await store.upsert(updated)
                     },
@@ -71,6 +71,13 @@ private extension AgendaView {
         enum Mode {
             case create
             case edit
+
+            var editorMode: EventEditorView.Mode {
+                switch self {
+                case .create: .create
+                case .edit: .edit
+                }
+            }
         }
 
         let mode: Mode

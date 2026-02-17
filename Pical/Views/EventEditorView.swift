@@ -25,7 +25,6 @@ struct EventEditorView: View {
             Form {
                 Section("Details") {
                     TextField("Title", text: $draft.title)
-                        .textContentType(.event)
 
                     DatePicker("Date & time", selection: $draft.timestamp)
 

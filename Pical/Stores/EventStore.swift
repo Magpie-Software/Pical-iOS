@@ -4,7 +4,7 @@ import SwiftUI
 @MainActor
 final class EventStore: ObservableObject {
     @Published private(set) var events: [EventRecord] = []
-    @Published private(set) var lastError: String?
+    @Published var lastError: String?
     @Published private(set) var isLoaded = false
 
     private let persistence: EventPersistence
