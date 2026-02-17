@@ -1,0 +1,45 @@
+import Foundation
+
+enum Formatters {
+    static let weekday: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateFormat = "EEEE"
+        return formatter
+    }()
+
+    static let shortDate: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateFormat = "MMM d"
+        return formatter
+    }()
+
+    static let time: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.timeStyle = .short
+        formatter.dateStyle = .none
+        return formatter
+    }()
+}
+
+extension PicalEvent {
+    var weekdayLabel: String {
+        Formatters.weekday.string(from: date)
+    }
+
+    var dateLabel: String {
+        Formatters.shortDate.string(from: date)
+    }
+
+    var timeDescription: String? {
+        guard includesTime else { return nil }
+        let start = Formatters.time.string(from: date)
+        if let endDate {
+            let end = Formatters.time.string(from: endDate)
+            return "\(start) – \(end)"
+        }
+        return start
+    }
+}

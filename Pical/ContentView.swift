@@ -1,21 +1,21 @@
-//
-//  ContentView.swift
-//  Pical
-//
-//  Created by Camden Bettencourt on 2/16/26.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @State private var store = EventStore()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            AgendaView()
+                .tabItem {
+                    Label("Agenda", systemImage: "list.bullet.rectangle")
+                }
+
+            RecurringEventsView()
+                .tabItem {
+                    Label("Recurring", systemImage: "repeat")
+                }
         }
-        .padding()
+        .environment(store)
     }
 }
 
