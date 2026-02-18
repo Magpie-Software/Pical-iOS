@@ -5,6 +5,7 @@ struct RecurringEventsView: View {
     @State private var editingEvent: RecurringEvent?
     @State private var selectedEvent: RecurringEvent?
     @State private var isPresentingNew = false
+    @State private var editMode: EditMode = .inactive
 
     var body: some View {
         NavigationStack {
@@ -18,8 +19,17 @@ struct RecurringEventsView: View {
                                 .contentShape(Rectangle())
                                 .onTapGesture { selectedEvent = event }
                                 .swipeActions(allowsFullSwipe: false) {
-                                    Button("Edit") {
+                                    Button {
                                         editingEvent = event
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
+                                    }
+                                    .tint(.blue)
+
+                                    Button {
+                                        store.duplicateRecurring(event)
+                                    } label: {
+                                        Label("Duplicate", systemImage: "plus.square.on.square")
                                     }
                                     .tint(.indigo)
 
@@ -30,12 +40,21 @@ struct RecurringEventsView: View {
                                     }
                                 }
                         }
+                        .onDelete { indices in
+                            store.deleteRecurring(at: indices)
+                        }
                     }
                     .listStyle(.plain)
+                    .environment(\.editMode, $editMode)
                 }
             }
             .navigationTitle("Recurring")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(editMode.isEditingList ? "Done" : "Manage") {
+                        editMode = editMode.isEditingList ? .inactive : .active
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         isPresentingNew = true

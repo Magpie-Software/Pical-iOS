@@ -28,6 +28,11 @@ final class EventStore {
         events.removeAll { $0.id == event.id }
     }
 
+    func deleteEvents(at offsets: IndexSet) {
+        let ids = offsets.map { events[$0].id }
+        events.removeAll { ids.contains($0.id) }
+    }
+
     func duplicateEvent(_ event: PicalEvent) {
         var clone = event
         clone.id = UUID()
@@ -67,6 +72,17 @@ final class EventStore {
 
     func deleteRecurring(_ event: RecurringEvent) {
         recurringEvents.removeAll { $0.id == event.id }
+    }
+
+    func deleteRecurring(at offsets: IndexSet) {
+        let ids = offsets.map { recurringEvents[$0].id }
+        recurringEvents.removeAll { ids.contains($0.id) }
+    }
+
+    func duplicateRecurring(_ event: RecurringEvent) {
+        var clone = event
+        clone.id = UUID()
+        addRecurring(clone)
     }
 
     private func sortRecurringEvents() {

@@ -3,7 +3,9 @@ import SwiftUI
 struct AgendaView: View {
     @Environment(EventStore.self) private var store
     @State private var selectedEvent: PicalEvent?
+    @State private var editingEvent: PicalEvent?
     @State private var isPresentingNewEvent = false
+    @State private var editMode: EditMode = .inactive
 
     var body: some View {
         NavigationStack {
@@ -19,8 +21,17 @@ struct AgendaView: View {
                                     selectedEvent = event
                                 }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    Button("Duplicate") {
+                                    Button {
+                                        editingEvent = event
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
+                                    }
+                                    .tint(.blue)
+
+                                    Button {
                                         store.duplicateEvent(event)
+                                    } label: {
+                                        Label("Duplicate", systemImage: "plus.square.on.square")
                                     }
                                     .tint(.indigo)
 
@@ -31,12 +42,21 @@ struct AgendaView: View {
                                     }
                                 }
                         }
+                        .onDelete { indices in
+                            store.deleteEvents(at: indices)
+                        }
                     }
                     .listStyle(.plain)
+                    .environment(\.editMode, $editMode)
                 }
             }
             .navigationTitle("Agenda")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(editMode.isEditingList ? "Done" : "Manage") {
+                        editMode = editMode.isEditingList ? .inactive : .active
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         isPresentingNewEvent = true
@@ -48,6 +68,11 @@ struct AgendaView: View {
             .sheet(item: $selectedEvent) { event in
                 EventDetailView(eventID: event.id)
                     .presentationDetents([.medium, .large])
+            }
+            .sheet(item: $editingEvent) { event in
+                EventFormView(event: event) { updated in
+                    store.updateEvent(updated)
+                }
             }
             .sheet(isPresented: $isPresentingNewEvent) {
                 EventFormView(event: nil) { newEvent in

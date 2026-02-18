@@ -45,7 +45,7 @@ struct RecurringEventFormView: View {
         var label: String {
             switch self {
             case .weekly: return "Weekly"
-            case .monthlyOrdinal: return "Monthly (Weekday)"
+            case .monthlyOrdinal: return "Monthly (Day)"
             case .monthlyDate: return "Monthly (Date)"
             }
         }
@@ -132,7 +132,7 @@ struct RecurringEventFormView: View {
                     case .monthlyDate:
                         Picker("Day of month", selection: $monthDay) {
                             ForEach(1...31, id: \.self) { day in
-                                Text("Day \(day)").tag(day)
+                                Text(day.ordinalString).tag(day)
                             }
                         }
                         .pickerStyle(.wheel)
@@ -153,8 +153,17 @@ struct RecurringEventFormView: View {
                     case .endDate:
                         DatePicker("End date", selection: $stopDate, displayedComponents: .date)
                     case .occurrenceCount:
-                        Stepper(value: $occurrenceCount, in: 1...60) {
+                        VStack(alignment: .leading) {
+                            Picker("Occurrences", selection: $occurrenceCount) {
+                                ForEach(1...60, id: \.self) { count in
+                                    Text(count.ordinalString).tag(count)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+
                             Text("After \(occurrenceCount) occurrences")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }

@@ -61,14 +61,7 @@ enum RecurrencePattern: Identifiable, Codable, Hashable {
         case let .monthlyOrdinal(ordinal, day):
             return "\(ordinal.label) \(day.label)"
         case let .monthlyDate(day):
-            let suffix: String
-            switch day {
-            case 1, 21, 31: suffix = "st"
-            case 2, 22: suffix = "nd"
-            case 3, 23: suffix = "rd"
-            default: suffix = "th"
-            }
-            return "Day \(day)\(suffix)"
+            return "\(day.ordinalString) of each month"
         }
     }
 }
