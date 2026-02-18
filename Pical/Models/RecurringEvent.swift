@@ -64,6 +64,22 @@ enum RecurrencePattern: Identifiable, Codable, Hashable {
             return "\(day.ordinalString) of each month"
         }
     }
+
+    var groupingKey: RecurrencePatternGroupingKey {
+        switch self {
+        case let .weekly(day):
+            return .init(title: day.label, sortIndex: day.rawValue)
+        case let .monthlyOrdinal(_, day):
+            return .init(title: day.label, sortIndex: day.rawValue)
+        case .monthlyDate:
+            return .init(title: "Specific dates", sortIndex: Weekday.allCases.count + 1)
+        }
+    }
+}
+
+struct RecurrencePatternGroupingKey: Hashable {
+    let title: String
+    let sortIndex: Int
 }
 
 enum RecurringStopCondition: Codable, Hashable {

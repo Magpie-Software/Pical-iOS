@@ -3,6 +3,10 @@ import SwiftUI
 struct OptionsView: View {
     @Environment(\.openURL) private var openURL
 
+    @AppStorage(SettingsKeys.agendaDateHeaders) private var agendaDateHeaders = false
+    @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = true
+    @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var recurringWeekdayGrouping = false
+
     private let donationLinks = OptionsLink.samples
     private let guideLinks = GuideLink.samples
     private let feedbackLinks = FeedbackLink.samples
@@ -10,6 +14,19 @@ struct OptionsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section("Display") {
+                    Toggle("Agenda date ribbons", isOn: $agendaDateHeaders)
+                        .toggleStyle(.switch)
+                        .accessibilityHint("Show each date as a header ribbon instead of the left column")
+
+                    Toggle("Smart agenda grouping", isOn: $smartAgendaGrouping)
+                        .toggleStyle(.switch)
+                        .accessibilityHint("Organize events into Today / This Week / Later buckets")
+
+                    Toggle("Group recurring by weekday", isOn: $recurringWeekdayGrouping)
+                        .toggleStyle(.switch)
+                }
+
                 Section("Support & Donations") {
                     ForEach(donationLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
