@@ -6,6 +6,7 @@ struct OptionsView: View {
     @AppStorage(SettingsKeys.agendaDateHeaders) private var agendaDateHeaders = false
     @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = true
     @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var recurringWeekdayGrouping = false
+    @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
 
     private let donationLinks = OptionsLink.samples
     private let guideLinks = GuideLink.samples
@@ -25,6 +26,15 @@ struct OptionsView: View {
 
                     Toggle("Group recurring by weekday", isOn: $recurringWeekdayGrouping)
                         .toggleStyle(.switch)
+                }
+
+                Section("Maintenance") {
+                    Toggle("Auto-clear past events", isOn: $autoPurgePastEvents)
+                        .toggleStyle(.switch)
+                        .accessibilityHint("When enabled, yesterday’s one-off events disappear on the next launch")
+                    Text("Clearing still happens manually when you disable this toggle.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
 
                 Section("Support & Donations") {

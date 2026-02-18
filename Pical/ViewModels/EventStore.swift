@@ -90,4 +90,43 @@ final class EventStore {
             lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
         }
     }
+
+    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, calendar: Calendar = .current) {
+        let startOfDay = calendar.startOfDay(for: referenceDate)
+        let previousDay = calendar.date(byAdding: .day, value: -1, to: startOfDay) ?? startOfDay
+
+        if purgePastEvents {
+            events.removeAll { calendar.startOfDay(for: $0.date) < startOfDay }
+        }
+
+        recurringEvents = recurringEvents.compactMap { event in
+            var updatedEvent = event
+
+            if let stopCondition = event.stopCondition {
+                switch stopCondition {
+                case let .endDate(date):
+                    if calendar.startOfDay(for: date) < startOfDay {
+                        return nil
+                    }
+                case let .occurrenceCount(remaining):
+                    if remaining <= 0 {
+                        return nil
+                    }
+
+                    if event.occurs(on: previousDay, calendar: calendar) {
+                        let next = max(remaining - 1, 0)
+                        if next == 0 {
+                            return nil
+                        }
+                        updatedEvent.stopCondition = .occurrenceCount(next)
+                    }
+                }
+            }
+
+            return updatedEvent
+        }
+
+        sortEvents()
+        sortRecurringEvents()
+    }
 }

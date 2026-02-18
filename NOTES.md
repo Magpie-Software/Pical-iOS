@@ -32,3 +32,6 @@ The following items from the 2026-02-16 plan are done and living in `main`:
 
 7. **Future launch prep**
    - Continue tightening overall personality (bird accents, tone, copy) and track App Store submission to-dos as features stabilize.
+
+8. **Daily event notifications (queued)**
+   - Add toggles for agenda vs. recurring reminders, schedule time-of-day pickers, and only send on days with events.
