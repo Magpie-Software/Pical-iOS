@@ -41,7 +41,7 @@ struct EventFormView: View {
                             }
                         }
 
-                    DatePicker("Start", selection: $draft.date, displayedComponents: draft.includesTime ? [.date, .hourAndMinute] : [.date])
+                    DatePicker(draft.includesTime ? "Start" : "Date", selection: $draft.date, displayedComponents: draft.includesTime ? [.date, .hourAndMinute] : [.date])
 
                     if draft.includesTime {
                         Toggle("Specify end time", isOn: $hasEndTime)

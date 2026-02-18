@@ -39,7 +39,7 @@ struct EventDetailView: View {
                         }
                     }
                 }
-                .navigationTitle("Event")
+                .navigationTitle(event.title)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Close") {

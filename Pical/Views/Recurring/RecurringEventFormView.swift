@@ -45,8 +45,8 @@ struct RecurringEventFormView: View {
         var label: String {
             switch self {
             case .weekly: return "Weekly"
-            case .monthlyOrdinal: return "Monthly (First Monday)"
-            case .monthlyDate: return "Monthly (Specific date)"
+            case .monthlyOrdinal: return "Monthly (Weekday)"
+            case .monthlyDate: return "Monthly (Date)"
             }
         }
     }
@@ -130,9 +130,12 @@ struct RecurringEventFormView: View {
                             }
                         }
                     case .monthlyDate:
-                        Stepper(value: $monthDay, in: 1...31) {
-                            Text("Day \(monthDay)")
+                        Picker("Day of month", selection: $monthDay) {
+                            ForEach(1...31, id: \.self) { day in
+                                Text("Day \(day)").tag(day)
+                            }
                         }
+                        .pickerStyle(.wheel)
                     }
                 }
 

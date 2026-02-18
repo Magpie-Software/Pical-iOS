@@ -3,6 +3,7 @@ import SwiftUI
 struct RecurringEventsView: View {
     @Environment(EventStore.self) private var store
     @State private var editingEvent: RecurringEvent?
+    @State private var selectedEvent: RecurringEvent?
     @State private var isPresentingNew = false
 
     var body: some View {
@@ -15,7 +16,7 @@ struct RecurringEventsView: View {
                         ForEach(store.recurringEvents) { event in
                             RecurringEventRowView(event: event)
                                 .contentShape(Rectangle())
-                                .onTapGesture { editingEvent = event }
+                                .onTapGesture { selectedEvent = event }
                                 .swipeActions(allowsFullSwipe: false) {
                                     Button("Edit") {
                                         editingEvent = event
@@ -42,6 +43,10 @@ struct RecurringEventsView: View {
                         Label("Add recurring", systemImage: "plus")
                     }
                 }
+            }
+            .sheet(item: $selectedEvent) { event in
+                RecurringEventDetailView(eventID: event.id)
+                    .presentationDetents([.medium, .large])
             }
             .sheet(item: $editingEvent) { event in
                 RecurringEventFormView(event: event) { updated in
