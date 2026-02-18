@@ -1,25 +1,34 @@
-# Pical-iOS — Upcoming Adjustments (as of 2026-02-16)
+# Pical-iOS — Planning Notes (updated 2026-02-18)
 
-1. **Event range**
-   - Agenda should display every stored event (sorted) with no artificial date cutoff. Infinite scroll isn’t required because recurring events will live elsewhere.
+## ✅ Recently Shipped
+The following items from the 2026-02-16 plan are done and living in `main`:
+- Agenda shows the full stored set, chronologically sorted.
+- Dedicated Recurring tab with weekly/monthly patterns + stop conditions.
+- Agenda row swipe actions for Duplicate/Edit/Delete, plus graceful truncation and optional timestamps.
+- Detail sheets precede edit flows for both agenda + recurring entries.
+- Swift Testing coverage restored for the new models and store behaviors.
+- General robustness pass on input trimming, optional fields, and non-crashy flows.
 
-2. **Recurring events tab**
-   - Add a dedicated view/tab for recurring patterns (weekly/monthly) where entries read like “Mondays”, “First of the month”, etc. Recurring events need optional stop conditions: let users choose either a last occurrence date or a fixed number of repeats.
+## 🔭 Next Wave Focus
+1. **Daily refresh job**
+   - On launch/background task, purge past one-off events and decrement “occurrences remaining” for recurring entries whose date truly passed.
 
-3. **Event duplication**
-   - Provide a “Duplicate” action so users can clone an existing event (useful for irregular repeats that stay in the one-off list).
+2. **Options tab**
+   - Third tab housing: feedback link, bug report form, usage guide, acknowledgments, donation/support links (Ko-fi/Patreon/BMAC research for 2026 best options).
 
-4. **Text truncation**
-   - Long titles and locations should truncate gracefully in agenda rows (notes already do and should remain). Ensure truncation doesn’t break layout.
+3. **Grouping options**
+   - Setting to group recurring events by weekday labels.
+   - Setting to group agenda items by date headers (ribbon badges) as an alternative to the current left-column labels.
 
-5. **Detail vs. edit flow**
-   - Tapping an agenda row opens a detail sheet first. Include an explicit Edit button inside the detail view to enter edit mode.
+4. **Smart agenda grouping**
+   - Auto sections like “Today”, “This Week”, “Next Week”, “Later” with a user-facing toggle.
 
-6. **Timestamp presentation**
-   - Make time optional metadata. Agenda rows should surface weekday labels (“Monday”) or dates depending on event type; time appears only if provided, under the title similar to location/notes.
+5. **Detail sheet quick actions**
+   - Add Duplicate + Delete buttons to the bottom of agenda + recurring detail sheets (full-width or side-by-side rows).
 
-7. **Tests**
-   - Current Swift Testing cases are broken; note for later fix once functional updates land.
+6. **Visual refinements**
+   - Revisit weekday presentation to avoid wrapping issues (e.g., “Wednesday”).
+   - General layout polish before theming.
 
-8. **Security/robustness**
-   - Maintain input validation and avoid crashy flows even though the app is local-only.
+7. **Future launch prep**
+   - Continue tightening overall personality (bird accents, tone, copy) and track App Store submission to-dos as features stabilize.
