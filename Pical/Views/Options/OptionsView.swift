@@ -7,6 +7,10 @@ struct OptionsView: View {
     @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = true
     @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var recurringWeekdayGrouping = false
     @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
+    @AppStorage(SettingsKeys.agendaNotificationsEnabled) private var agendaNotificationsEnabled = false
+    @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
+    @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
+    @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
 
     private let donationLinks = OptionsLink.samples
     private let guideLinks = GuideLink.samples
@@ -26,6 +30,38 @@ struct OptionsView: View {
 
                     Toggle("Group recurring by weekday", isOn: $recurringWeekdayGrouping)
                         .toggleStyle(.switch)
+                }
+
+                Section("Notifications") {
+                    Toggle("Agenda reminders", isOn: $agendaNotificationsEnabled)
+                    if agendaNotificationsEnabled {
+                        DatePicker(
+                            "Agenda reminder time",
+                            selection: Binding(
+                                get: { timeFromSeconds(agendaNotificationTime) },
+                                set: { agendaNotificationTime = secondsFromMidnight($0) }
+                            ),
+                            displayedComponents: .hourAndMinute
+                        )
+                        .datePickerStyle(.wheel)
+                    }
+
+                    Toggle("Recurring reminders", isOn: $recurringNotificationsEnabled)
+                    if recurringNotificationsEnabled {
+                        DatePicker(
+                            "Recurring reminder time",
+                            selection: Binding(
+                                get: { timeFromSeconds(recurringNotificationTime) },
+                                set: { recurringNotificationTime = secondsFromMidnight($0) }
+                            ),
+                            displayedComponents: .hourAndMinute
+                        )
+                        .datePickerStyle(.wheel)
+                    }
+
+                    Text("Notifications only fire on days that actually have events.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
 
                 Section("Maintenance") {
@@ -71,6 +107,17 @@ struct OptionsView: View {
             }
             .navigationTitle("Options")
         }
+    }
+
+    private func timeFromSeconds(_ seconds: Double) -> Date {
+        let startOfDay = Calendar.current.startOfDay(for: Date())
+        return startOfDay.addingTimeInterval(seconds)
+    }
+
+    private func secondsFromMidnight(_ date: Date) -> Double {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        return max(0, min(86_399, date.timeIntervalSince(startOfDay)))
     }
 }
 

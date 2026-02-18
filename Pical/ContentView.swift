@@ -4,6 +4,12 @@ struct ContentView: View {
     @State private var store = EventStore()
     @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
     @AppStorage(SettingsKeys.lastRefreshTimestamp) private var lastRefreshTimestamp: Double = 0
+    @AppStorage(SettingsKeys.agendaNotificationsEnabled) private var agendaNotificationsEnabled = false
+    @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
+    @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
+    @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
+
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView {
@@ -23,7 +29,24 @@ struct ContentView: View {
                 }
         }
         .environment(store)
-        .task(runDailyRefreshIfNeeded)
+        .task { await runDailyRefreshIfNeeded() }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active {
+                Task { await scheduleNotificationsForToday() }
+            }
+        }
+        .onChange(of: agendaNotificationsEnabled) { _ in
+            Task { await scheduleNotificationsForToday() }
+        }
+        .onChange(of: recurringNotificationsEnabled) { _ in
+            Task { await scheduleNotificationsForToday() }
+        }
+        .onChange(of: agendaNotificationTime) { _ in
+            Task { await scheduleNotificationsForToday() }
+        }
+        .onChange(of: recurringNotificationTime) { _ in
+            Task { await scheduleNotificationsForToday() }
+        }
     }
 
     private func runDailyRefreshIfNeeded() async {
@@ -37,6 +60,21 @@ struct ContentView: View {
             }
             lastRefreshTimestamp = today.timeIntervalSince1970
         }
+
+        await scheduleNotificationsForToday()
+    }
+
+    private func scheduleNotificationsForToday() async {
+        let snapshot = await MainActor.run { (events: store.events, recurring: store.recurringEvents) }
+        await NotificationScheduler.shared.scheduleNotifications(
+            for: Date(),
+            events: snapshot.events,
+            recurringEvents: snapshot.recurring,
+            agendaEnabled: agendaNotificationsEnabled,
+            recurringEnabled: recurringNotificationsEnabled,
+            agendaTime: agendaNotificationTime,
+            recurringTime: recurringNotificationTime
+        )
     }
 }
 
