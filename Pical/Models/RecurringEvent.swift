@@ -57,7 +57,7 @@ enum RecurrencePattern: Identifiable, Codable, Hashable {
     var description: String {
         switch self {
         case let .weekly(day):
-            return "Every \(day.label)s"
+            return "Every \(day.label)"
         case let .monthlyOrdinal(ordinal, day):
             return "\(ordinal.label) \(day.label)"
         case let .monthlyDate(day):
