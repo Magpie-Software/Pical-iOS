@@ -9,9 +9,12 @@ struct AgendaRowView: View {
                 Text(event.weekdayLabel)
                     .font(.headline)
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
                 Text(event.dateLabel)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
             .frame(width: 90, alignment: .leading)
 

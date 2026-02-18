@@ -6,6 +6,7 @@ struct EventDetailView: View {
 
     let eventID: UUID
     @State private var isEditing = false
+    @State private var isConfirmingDeletion = false
 
     private var event: PicalEvent? {
         store.events.first(where: { $0.id == eventID })
@@ -38,6 +39,20 @@ struct EventDetailView: View {
                             Text(notes)
                         }
                     }
+
+                    Section("Quick actions") {
+                        Button {
+                            store.duplicateEvent(event)
+                        } label: {
+                            Label("Duplicate", systemImage: "plus.square.on.square")
+                        }
+
+                        Button(role: .destructive) {
+                            isConfirmingDeletion = true
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
                 }
                 .navigationTitle(event.title)
                 .toolbar {
@@ -57,6 +72,13 @@ struct EventDetailView: View {
                     EventFormView(event: event) { updatedEvent in
                         store.updateEvent(updatedEvent)
                     }
+                }
+                .confirmationDialog("Delete this event?", isPresented: $isConfirmingDeletion, titleVisibility: .visible) {
+                    Button("Delete", role: .destructive) {
+                        store.deleteEvent(event)
+                        dismiss()
+                    }
+                    Button("Cancel", role: .cancel) { }
                 }
             } else {
                 ContentUnavailableView("Event removed", systemImage: "calendar.badge.exclamationmark", description: Text("It might have been deleted while you were looking at it."))
