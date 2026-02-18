@@ -14,6 +14,11 @@ struct ContentView: View {
                 .tabItem {
                     Label("Recurring", systemImage: "repeat")
                 }
+
+            OptionsView()
+                .tabItem {
+                    Label("Options", systemImage: "slider.horizontal.3")
+                }
         }
         .environment(store)
     }

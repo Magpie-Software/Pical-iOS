@@ -1,0 +1,160 @@
+import SwiftUI
+
+struct OptionsView: View {
+    @Environment(\.openURL) private var openURL
+
+    private let donationLinks = OptionsLink.samples
+    private let guideLinks = GuideLink.samples
+    private let feedbackLinks = FeedbackLink.samples
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Support & Donations") {
+                    ForEach(donationLinks) { link in
+                        OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
+                            openURL(link.url)
+                        }
+                    }
+                }
+
+                Section("Guides & Docs") {
+                    ForEach(guideLinks) { link in
+                        OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
+                            openURL(link.url)
+                        }
+                    }
+                }
+
+                Section("Feedback & Bug Reports") {
+                    ForEach(feedbackLinks) { link in
+                        OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
+                            openURL(link.url)
+                        }
+                    }
+                }
+
+                Section("Acknowledgments") {
+                    NavigationLink {
+                        AcknowledgmentsView()
+                    } label: {
+                        Label("View credits", systemImage: "list.star")
+                    }
+                }
+            }
+            .navigationTitle("Options")
+        }
+    }
+}
+
+private struct OptionsLinkRow: View {
+    let title: String
+    let detail: String?
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 4) {
+                Label(title, systemImage: systemImage)
+                if let detail {
+                    Text(detail)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .tint(.primary)
+    }
+}
+
+private struct OptionsLink: Identifiable {
+    let id = UUID()
+    let title: String
+    let detail: String?
+    let icon: String
+    let url: URL
+
+    static let samples: [OptionsLink] = [
+        OptionsLink(
+            title: "Ko-fi",
+            detail: "One-off tips for MagWare/Pical",
+            icon: "cup.and.saucer.fill",
+            url: URL(string: "https://ko-fi.com/magware")!
+        ),
+        OptionsLink(
+            title: "Patreon",
+            detail: "Recurring support with perks",
+            icon: "wand.and.stars",
+            url: URL(string: "https://patreon.com/magware")!
+        ),
+        OptionsLink(
+            title: "Buy Me a Coffee",
+            detail: "Fast donations without an account",
+            icon: "mug.fill",
+            url: URL(string: "https://buymeacoffee.com/magware")!
+        )
+    ]
+}
+
+private struct GuideLink: Identifiable {
+    let id = UUID()
+    let title: String
+    let detail: String?
+    let icon: String
+    let url: URL
+
+    static let samples: [GuideLink] = [
+        GuideLink(
+            title: "Usage guide",
+            detail: "Get started + learn the gestures",
+            icon: "book.closed.fill",
+            url: URL(string: "https://magpiesoftware.notion.site/pical-guide")!
+        ),
+        GuideLink(
+            title: "Release notes",
+            detail: "Track what changed between builds",
+            icon: "doc.text.fill",
+            url: URL(string: "https://magpiesoftware.notion.site/pical-release-notes")!
+        )
+    ]
+}
+
+private struct FeedbackLink: Identifiable {
+    let id = UUID()
+    let title: String
+    let detail: String?
+    let icon: String
+    let url: URL
+
+    static let samples: [FeedbackLink] = [
+        FeedbackLink(
+            title: "Feedback form",
+            detail: "Share ideas or feature requests",
+            icon: "bubble.left.fill",
+            url: URL(string: "https://magpiesoftware.typeform.com/pical-feedback")!
+        ),
+        FeedbackLink(
+            title: "Bug report",
+            detail: "Attach diagnostics & repro steps",
+            icon: "ladybug.fill",
+            url: URL(string: "https://magpiesoftware.typeform.com/pical-bugs")!
+        )
+    ]
+}
+
+private struct AcknowledgmentsView: View {
+    var body: some View {
+        List {
+            Section("Core team") {
+                LabeledContent("Product", value: "Camden Bettencourt")
+                LabeledContent("iOS build", value: "Donsy helper")
+            }
+
+            Section("Thanks") {
+                Text("Beta testers, corvid pals, and everyone sharing scheduling chaos stories.")
+            }
+        }
+        .navigationTitle("Acknowledgments")
+    }
+}
