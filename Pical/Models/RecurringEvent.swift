@@ -124,7 +124,7 @@ extension RecurringEvent {
                            pattern: .monthlyDate(15),
                            location: nil,
                            notes: "Check subscriptions",
-                           stopCondition: .endDate(Calendar.current.date(byAdding: .month, value: 6, to: Date())))
+                           stopCondition: .endDate(Calendar.current.date(byAdding: .month, value: 6, to: Date()) ?? Date()))
         ]
     }
 }
