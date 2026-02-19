@@ -74,8 +74,8 @@ struct AgendaContentView: View {
                 }
             }
         }
-        .listStyle(useDateHeaders || useSmartGrouping ? .insetGrouped : .plain)
         .environment(\.editMode, $editMode)
+        .applyAgendaListStyle(useDateHeaders || useSmartGrouping)
     }
 
     private var emptySection: some View {
@@ -130,6 +130,7 @@ struct AgendaContentView: View {
         }
     }
 
+    @ViewBuilder
     private func sectionHeader(for section: AgendaSectionDisplay) -> some View {
         switch section.style {
         case let .date(date):
@@ -216,7 +217,18 @@ private enum DateAgendaSection {
     }
 }
 
+private extension View {
+    @ViewBuilder
+    func applyAgendaListStyle(_ useInsetGrouped: Bool) -> some View {
+        if useInsetGrouped {
+            listStyle(.insetGrouped)
+        } else {
+            listStyle(.plain)
+        }
+    }
+}
+
 #Preview {
-    AgendaView()
+    AgendaContentView()
         .environment(EventStore())
 }
