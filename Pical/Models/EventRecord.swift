@@ -67,8 +67,9 @@ extension EventRecord {
         return copy
     }
 
-    func occurrence(in range: ClosedRange<Date>, calendar: Calendar = .autoupdatingCurrent) -> EventOccurrence? {
-        guard range.contains(timestamp) else { return nil }
+    func occurrence(startingAt start: Date, endingAt end: Date?, calendar: Calendar = .autoupdatingCurrent) -> EventOccurrence? {
+        guard timestamp >= start else { return nil }
+        if let end, timestamp > end { return nil }
         return EventOccurrence(event: self, occurrenceDate: timestamp, isRecurring: false, hasExplicitTime: includesTime)
     }
 }
