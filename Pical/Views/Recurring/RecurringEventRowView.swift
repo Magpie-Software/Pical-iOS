@@ -10,15 +10,20 @@ struct RecurringEventRowView: View {
             Text(event.title)
                 .font(.headline)
                 .lineLimit(1)
+                .truncationMode(.tail)
 
             Label(event.pattern.description, systemImage: "repeat")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
 
             if !compactLayout, let stop = event.stopCondition {
                 Label(stop.description, systemImage: "stopwatch")
                     .font(.footnote)
                     .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
             }
 
             if !compactLayout, let location = event.location, !location.isEmpty {
@@ -26,6 +31,7 @@ struct RecurringEventRowView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .truncationMode(.tail)
             }
 
             if !compactLayout, let notes = event.notes, !notes.isEmpty {
@@ -33,6 +39,7 @@ struct RecurringEventRowView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .truncationMode(.tail)
             }
         }
         .padding(.vertical, compactLayout ? 6 : 8)

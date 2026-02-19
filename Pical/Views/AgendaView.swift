@@ -3,7 +3,9 @@ import SwiftUI
 struct AgendaView: View {
     @StateObject var store: EventStore
     @State private var editor: EditorPresentation?
+    @State private var selectedEvent: EventRecord?
     @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = false
+    @State private var selectedOccurrence: EventOccurrence?
 
     var body: some View {
         NavigationStack {
@@ -45,6 +47,14 @@ struct AgendaView: View {
                     }
                 )
             }
+            .sheet(item: $selectedEvent) { event in
+                AgendaEventDetailView(
+                    event: event,
+                    onEdit: { presentEditor(for: event) },
+                    onDuplicate: { duplicate(event: event) },
+                    onDelete: { delete(event: event) }
+                )
+            }
         }
         .alert(textBinding: $store.lastError)
     }
@@ -54,9 +64,7 @@ struct AgendaView: View {
             ForEach(sections) { section in
                 Section {
                     ForEach(section.events) { occurrence in
-                        EventRowView(occurrence: occurrence, showDateLabel: smartAgendaGrouping)
-                            .contentShape(Rectangle())
-                            .onTapGesture { presentEditor(for: occurrence) }
+                        agendaRow(for: occurrence)
                     }
                 } header: {
                     header(for: section)
@@ -87,9 +95,53 @@ struct AgendaView: View {
         }
     }
 
-    private func presentEditor(for occurrence: EventOccurrence) {
-        guard let event = store.event(id: occurrence.eventID) else { return }
+    @ViewBuilder
+    private func agendaRow(for occurrence: EventOccurrence) -> some View {
+        if let event = store.event(id: occurrence.eventID) {
+            EventRowView(occurrence: occurrence, showDateLabel: smartAgendaGrouping)
+                .contentShape(Rectangle())
+                .onTapGesture { selectedEvent = event }
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    Button {
+                        presentEditor(for: event)
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                    .tint(.blue)
+
+                    Button {
+                        duplicate(event: event)
+                    } label: {
+                        Label("Duplicate", systemImage: "plus.square.on.square")
+                    }
+                    .tint(.indigo)
+
+                    Button(role: .destructive) {
+                        delete(event: event)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+        }
+    }
+
+    private func presentEditor(for event: EventRecord) {
         editor = .init(mode: .edit, event: event)
+    }
+
+    private func duplicate(event: EventRecord) {
+        let copy = EventRecord(
+            title: event.title,
+            timestamp: event.timestamp,
+            location: event.location,
+            notes: event.notes,
+            includesTime: event.includesTime
+        )
+        Task { await store.upsert(copy) }
+    }
+
+    private func delete(event: EventRecord) {
+        Task { await store.delete(eventID: event.id) }
     }
 
     private func presentNewEvent() {

@@ -17,12 +17,16 @@ struct EventRowView: View {
             VStack(alignment: .leading, spacing: compactLayout ? 2 : 4) {
                 Text(occurrence.title)
                     .font(.headline)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
 
                 if !compactLayout, let location = occurrence.location, !location.isEmpty {
                     Label(location, systemImage: "mappin.and.ellipse")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .labelStyle(.titleAndIcon)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
 
                 if !compactLayout, let notes = occurrence.notes, !notes.isEmpty {
@@ -30,6 +34,7 @@ struct EventRowView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
+                        .truncationMode(.tail)
                 }
             }
 
