@@ -11,10 +11,7 @@ struct AgendaEventDetailView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Overview") {
-                    Text(event.title)
-                        .font(.title3)
-                        .bold()
+                Section("Date") {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(dateFormatter.string(from: event.timestamp))
                             .foregroundStyle(.secondary)
