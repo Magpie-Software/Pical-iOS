@@ -3,7 +3,7 @@ import SwiftUI
 struct AgendaView: View {
     @StateObject var store: EventStore
     @State private var editor: EditorPresentation?
-    @State private var selectedEventID: UUID?
+    @State private var selectedEventID: EventRecord.ID?
     @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = false
     @State private var selectedOccurrence: EventOccurrence?
 
