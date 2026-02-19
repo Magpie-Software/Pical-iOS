@@ -3,9 +3,9 @@ import SwiftUI
 struct OptionsView: View {
     @Environment(\.openURL) private var openURL
 
-    @AppStorage(SettingsKeys.agendaDateHeaders) private var agendaDateHeaders = false
-    @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = true
+    @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = false
     @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var recurringWeekdayGrouping = false
+    @AppStorage(SettingsKeys.compactLayout) private var compactLayout = false
     @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
     @AppStorage(SettingsKeys.agendaNotificationsEnabled) private var agendaNotificationsEnabled = false
     @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
@@ -20,9 +20,9 @@ struct OptionsView: View {
         NavigationStack {
             List {
                 Section("Display") {
-                    Toggle("Agenda date ribbons", isOn: $agendaDateHeaders)
+                    Toggle("Compact view", isOn: $compactLayout)
                         .toggleStyle(.switch)
-                        .accessibilityHint("Show each date as a header ribbon instead of the left column")
+                        .accessibilityHint("Hide secondary fields like locations and notes in list rows")
 
                     Toggle("Smart agenda grouping", isOn: $smartAgendaGrouping)
                         .toggleStyle(.switch)

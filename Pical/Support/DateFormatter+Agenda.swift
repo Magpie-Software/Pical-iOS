@@ -14,4 +14,11 @@ extension DateFormatter {
         formatter.dateStyle = .none
         return formatter
     }()
+
+    static var eventDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
 }
