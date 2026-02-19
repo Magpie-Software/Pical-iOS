@@ -39,7 +39,7 @@ struct NotificationScheduler {
             content.sound = .default
 
             let request = UNNotificationRequest(identifier: Identifiers.combined, content: content, trigger: trigger)
-            await center.add(request)
+            await add(request)
             return
         }
 
@@ -52,7 +52,7 @@ struct NotificationScheduler {
             content.sound = .default
 
             let request = UNNotificationRequest(identifier: Identifiers.agenda, content: content, trigger: trigger)
-            await center.add(request)
+            await add(request)
         }
 
         if recurringEnabled,
@@ -64,7 +64,17 @@ struct NotificationScheduler {
             content.sound = .default
 
             let request = UNNotificationRequest(identifier: Identifiers.recurring, content: content, trigger: trigger)
-            await center.add(request)
+            await add(request)
+        }
+    }
+
+    private func add(_ request: UNNotificationRequest) async {
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("NotificationScheduler failed to schedule: \(error.localizedDescription)")
+            #endif
         }
     }
 
