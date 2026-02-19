@@ -2,11 +2,17 @@ import SwiftUI
 
 @main
 struct PicalApp: App {
-    @StateObject private var store = EventStore()
+    init() {
+        UserDefaults.standard.register(defaults: [
+            SettingsKeys.recurringWeekdayGrouping: true,
+            SettingsKeys.smartAgendaGrouping: true,
+            SettingsKeys.compactLayout: false
+        ])
+    }
 
     var body: some Scene {
         WindowGroup {
-            AgendaView(store: store)
+            ContentView()
         }
     }
 }

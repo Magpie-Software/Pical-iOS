@@ -64,6 +64,22 @@ enum RecurrencePattern: Identifiable, Codable, Hashable {
             return "\(day.ordinalString) of each month"
         }
     }
+
+    var groupingKey: RecurrencePatternGroupingKey {
+        switch self {
+        case let .weekly(day):
+            return .init(title: day.label, sortIndex: day.rawValue)
+        case let .monthlyOrdinal(_, day):
+            return .init(title: day.label, sortIndex: day.rawValue)
+        case .monthlyDate:
+            return .init(title: "Specific dates", sortIndex: Weekday.allCases.count + 1)
+        }
+    }
+}
+
+struct RecurrencePatternGroupingKey: Hashable {
+    let title: String
+    let sortIndex: Int
 }
 
 enum RecurringStopCondition: Codable, Hashable {
@@ -119,5 +135,23 @@ extension RecurringEvent {
                            notes: "Check subscriptions",
                            stopCondition: .endDate(Calendar.current.date(byAdding: .month, value: 6, to: Date()) ?? Date()))
         ]
+    }
+
+    func occurs(on date: Date, calendar: Calendar = .current) -> Bool {
+        let normalized = calendar.startOfDay(for: date)
+        switch pattern {
+        case let .weekly(day):
+            return calendar.component(.weekday, from: normalized) == day.rawValue
+        case let .monthlyOrdinal(ordinal, day):
+            guard calendar.component(.weekday, from: normalized) == day.rawValue else { return false }
+            if ordinal == .last {
+                guard let nextWeek = calendar.date(byAdding: .day, value: 7, to: normalized) else { return false }
+                return calendar.component(.month, from: nextWeek) != calendar.component(.month, from: normalized)
+            } else {
+                return calendar.component(.weekdayOrdinal, from: normalized) == ordinal.rawValue
+            }
+        case let .monthlyDate(day):
+            return calendar.component(.day, from: normalized) == day
+        }
     }
 }

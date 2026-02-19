@@ -1,11 +1,12 @@
 import SwiftUI
 
 struct RecurringEventDetailView: View {
-    @Environment(EventStore.self) private var store
+    @Environment(AgendaDataStore.self) private var store
     @Environment(\.dismiss) private var dismiss
 
     let eventID: UUID
     @State private var isEditing = false
+    @State private var isConfirmingDeletion = false
 
     private var event: RecurringEvent? {
         store.recurringEvents.first(where: { $0.id == eventID })
@@ -40,6 +41,20 @@ struct RecurringEventDetailView: View {
                             Text(notes)
                         }
                     }
+
+                    Section("Quick actions") {
+                        Button {
+                            store.duplicateRecurring(event)
+                        } label: {
+                            Label("Duplicate", systemImage: "plus.square.on.square")
+                        }
+
+                        Button(role: .destructive) {
+                            isConfirmingDeletion = true
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
                 }
                 .navigationTitle(event.title)
                 .toolbar {
@@ -54,6 +69,13 @@ struct RecurringEventDetailView: View {
                     RecurringEventFormView(event: event) { updated in
                         store.updateRecurring(updated)
                     }
+                }
+                .confirmationDialog("Delete this recurring pattern?", isPresented: $isConfirmingDeletion, titleVisibility: .visible) {
+                    Button("Delete", role: .destructive) {
+                        store.deleteRecurring(event)
+                        dismiss()
+                    }
+                    Button("Cancel", role: .cancel) { }
                 }
             } else {
                 ContentUnavailableView(
@@ -73,5 +95,5 @@ struct RecurringEventDetailView: View {
 
 #Preview {
     RecurringEventDetailView(eventID: RecurringEvent.sampleData().first!.id)
-        .environment(EventStore())
+        .environment(AgendaDataStore())
 }

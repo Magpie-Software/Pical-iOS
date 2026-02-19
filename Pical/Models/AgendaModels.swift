@@ -8,8 +8,9 @@ struct EventOccurrence: Identifiable, Hashable {
     let location: String?
     let notes: String?
     let isRecurring: Bool
+    let hasExplicitTime: Bool
 
-    init(event: EventRecord, occurrenceDate: Date, isRecurring: Bool) {
+    init(event: EventRecord, occurrenceDate: Date, isRecurring: Bool, hasExplicitTime: Bool) {
         self.id = "\(event.id.uuidString)-\(occurrenceDate.timeIntervalSinceReferenceDate)"
         self.eventID = event.id
         self.startDate = occurrenceDate
@@ -17,6 +18,7 @@ struct EventOccurrence: Identifiable, Hashable {
         self.location = event.location
         self.notes = event.notes
         self.isRecurring = isRecurring
+        self.hasExplicitTime = hasExplicitTime
     }
 }
 

@@ -44,16 +44,15 @@ final class EventStore: ObservableObject {
         events.first { $0.id == id }
     }
 
-    func occurrences(daysAhead: Int = 21, calendar: Calendar = .autoupdatingCurrent) -> [EventOccurrence] {
+    func occurrences(daysAhead: Int? = nil, calendar: Calendar = .autoupdatingCurrent) -> [EventOccurrence] {
         let start = calendar.startOfDay(for: .now)
-        guard let end = calendar.date(byAdding: .day, value: daysAhead, to: start) else { return [] }
-        let range = start...end
+        let end = daysAhead.flatMap { calendar.date(byAdding: .day, value: $0, to: start) }
         return events
-            .flatMap { $0.occurrences(in: range, calendar: calendar) }
+            .compactMap { $0.occurrence(startingAt: start, endingAt: end, calendar: calendar) }
             .sorted(by: { $0.startDate < $1.startDate })
     }
 
-    func agendaSections(daysAhead: Int = 21, calendar: Calendar = .autoupdatingCurrent) -> [AgendaSection] {
+    func agendaSections(daysAhead: Int? = nil, calendar: Calendar = .autoupdatingCurrent) -> [AgendaSection] {
         let grouped = Dictionary(grouping: occurrences(daysAhead: daysAhead, calendar: calendar)) { occurrence in
             calendar.startOfDay(for: occurrence.startDate)
         }

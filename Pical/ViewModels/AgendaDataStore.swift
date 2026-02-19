@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 @Observable
-final class EventStore {
+final class AgendaDataStore {
     private(set) var events: [PicalEvent]
     private(set) var recurringEvents: [RecurringEvent]
 
@@ -61,13 +61,11 @@ final class EventStore {
 
     func addRecurring(_ event: RecurringEvent) {
         recurringEvents.append(event)
-        sortRecurringEvents()
     }
 
     func updateRecurring(_ event: RecurringEvent) {
         guard let index = recurringEvents.firstIndex(where: { $0.id == event.id }) else { return }
         recurringEvents[index] = event
-        sortRecurringEvents()
     }
 
     func deleteRecurring(_ event: RecurringEvent) {
@@ -82,12 +80,52 @@ final class EventStore {
     func duplicateRecurring(_ event: RecurringEvent) {
         var clone = event
         clone.id = UUID()
-        addRecurring(clone)
+        if let index = recurringEvents.firstIndex(where: { $0.id == event.id }) {
+            recurringEvents.insert(clone, at: index + 1)
+        } else {
+            recurringEvents.append(clone)
+        }
     }
 
-    private func sortRecurringEvents() {
-        recurringEvents.sort { lhs, rhs in
-            lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+    func moveRecurring(from offsets: IndexSet, to destination: Int) {
+        recurringEvents.move(fromOffsets: offsets, toOffset: destination)
+    }
+
+    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, calendar: Calendar = .current) {
+        let startOfDay = calendar.startOfDay(for: referenceDate)
+        let previousDay = calendar.date(byAdding: .day, value: -1, to: startOfDay) ?? startOfDay
+
+        if purgePastEvents {
+            events.removeAll { calendar.startOfDay(for: $0.date) < startOfDay }
         }
+
+        recurringEvents = recurringEvents.compactMap { event in
+            var updatedEvent = event
+
+            if let stopCondition = event.stopCondition {
+                switch stopCondition {
+                case let .endDate(date):
+                    if calendar.startOfDay(for: date) < startOfDay {
+                        return nil
+                    }
+                case let .occurrenceCount(remaining):
+                    if remaining <= 0 {
+                        return nil
+                    }
+
+                    if event.occurs(on: previousDay, calendar: calendar) {
+                        let next = max(remaining - 1, 0)
+                        if next == 0 {
+                            return nil
+                        }
+                        updatedEvent.stopCondition = .occurrenceCount(next)
+                    }
+                }
+            }
+
+            return updatedEvent
+        }
+
+        sortEvents()
     }
 }
