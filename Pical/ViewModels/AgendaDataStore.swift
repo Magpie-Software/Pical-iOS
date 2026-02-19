@@ -61,13 +61,11 @@ final class AgendaDataStore {
 
     func addRecurring(_ event: RecurringEvent) {
         recurringEvents.append(event)
-        sortRecurringEvents()
     }
 
     func updateRecurring(_ event: RecurringEvent) {
         guard let index = recurringEvents.firstIndex(where: { $0.id == event.id }) else { return }
         recurringEvents[index] = event
-        sortRecurringEvents()
     }
 
     func deleteRecurring(_ event: RecurringEvent) {
@@ -82,13 +80,15 @@ final class AgendaDataStore {
     func duplicateRecurring(_ event: RecurringEvent) {
         var clone = event
         clone.id = UUID()
-        addRecurring(clone)
+        if let index = recurringEvents.firstIndex(where: { $0.id == event.id }) {
+            recurringEvents.insert(clone, at: index + 1)
+        } else {
+            recurringEvents.append(clone)
+        }
     }
 
-    private func sortRecurringEvents() {
-        recurringEvents.sort { lhs, rhs in
-            lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
-        }
+    func moveRecurring(from offsets: IndexSet, to destination: Int) {
+        recurringEvents.move(fromOffsets: offsets, toOffset: destination)
     }
 
     func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, calendar: Calendar = .current) {
@@ -127,6 +127,5 @@ final class AgendaDataStore {
         }
 
         sortEvents()
-        sortRecurringEvents()
     }
 }

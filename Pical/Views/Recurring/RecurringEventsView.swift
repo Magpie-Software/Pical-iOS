@@ -7,7 +7,7 @@ struct RecurringEventsView: View {
     @State private var isPresentingNew = false
     @State private var editMode: EditMode = .inactive
 
-    @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var groupByWeekday = false
+    @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var groupByWeekday = true
 
     var body: some View {
         NavigationStack {
@@ -70,6 +70,9 @@ struct RecurringEventsView: View {
                 .onDelete { indices in
                     store.deleteRecurring(at: indices)
                 }
+                .onMove { indices, newOffset in
+                    store.moveRecurring(from: indices, to: newOffset)
+                }
             }
         }
         .environment(\.editMode, $editMode)
@@ -110,13 +113,53 @@ private struct RecurringWeekdaySection: Identifiable {
     let events: [RecurringEvent]
 
     static func build(from events: [RecurringEvent]) -> [RecurringWeekdaySection] {
-        let grouped = Dictionary(grouping: events) { event in
-            event.pattern.groupingKey
+        var sections: [RecurringWeekdaySection] = []
+
+        for day in Weekday.allCases {
+            let dayEvents = events.filter {
+                if case .weekly(day) = $0.pattern {
+                    return true
+                }
+                return false
+            }
+
+            if !dayEvents.isEmpty {
+                sections.append(RecurringWeekdaySection(title: day.label, events: dayEvents))
+            }
         }
 
-        return grouped.keys.sorted(by: { $0.sortIndex < $1.sortIndex }).map { key in
-            RecurringWeekdaySection(title: key.title, events: grouped[key] ?? [])
+        let monthlyOrdinal = events.compactMap { event -> (RecurringEvent, Int, Int)? in
+            if case let .monthlyOrdinal(ordinal, day) = event.pattern {
+                return (event, day.rawValue, ordinal.rawValue)
+            }
+            return nil
         }
+        .sorted { lhs, rhs in
+            if lhs.1 == rhs.1 {
+                return lhs.2 < rhs.2
+            }
+            return lhs.1 < rhs.1
+        }
+        .map { $0.0 }
+
+        if !monthlyOrdinal.isEmpty {
+            sections.append(RecurringWeekdaySection(title: "Monthly (Weekday order)", events: monthlyOrdinal))
+        }
+
+        let monthlyDate = events.compactMap { event -> (RecurringEvent, Int)? in
+            if case let .monthlyDate(day) = event.pattern {
+                return (event, day)
+            }
+            return nil
+        }
+        .sorted { $0.1 < $1.1 }
+        .map { $0.0 }
+
+        if !monthlyDate.isEmpty {
+            sections.append(RecurringWeekdaySection(title: "Monthly (Specific dates)", events: monthlyDate))
+        }
+
+        return sections
     }
 }
 
