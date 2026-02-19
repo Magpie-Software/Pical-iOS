@@ -3,7 +3,7 @@ import SwiftUI
 struct AgendaView: View {
     @StateObject var store: EventStore
     @State private var editor: EditorPresentation?
-    @State private var selectedEventID: EventRecord.ID?
+    @State private var selectedEvent: SelectedEvent?
     @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = false
     @State private var selectedOccurrence: EventOccurrence?
 
@@ -47,8 +47,8 @@ struct AgendaView: View {
                     }
                 )
             }
-            .sheet(item: $selectedEventID) { eventID in
-                if let event = store.event(id: eventID) {
+            .sheet(item: $selectedEvent) { selection in
+                if let event = store.event(id: selection.id) {
                     AgendaEventDetailView(
                         event: event,
                         onEdit: { presentEditor(for: event) },
@@ -62,8 +62,8 @@ struct AgendaView: View {
         }
         .alert(textBinding: $store.lastError)
         .onChange(of: store.events) { _ in
-            if let id = selectedEventID, store.event(id: id) == nil {
-                selectedEventID = nil
+            if let selection = selectedEvent, store.event(id: selection.id) == nil {
+                selectedEvent = nil
             }
         }
     }
@@ -109,7 +109,7 @@ struct AgendaView: View {
         if let event = store.event(id: occurrence.eventID) {
             EventRowView(occurrence: occurrence, showDateLabel: smartAgendaGrouping)
                 .contentShape(Rectangle())
-                .onTapGesture { selectedEventID = event.id }
+                .onTapGesture { selectedEvent = SelectedEvent(id: event.id) }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button {
                         presentEditor(for: event)
@@ -149,8 +149,8 @@ struct AgendaView: View {
     private func delete(event: EventRecord) {
         Task {
             await store.delete(eventID: event.id)
-            if selectedEventID == event.id {
-                selectedEventID = nil
+            if selectedEvent?.id == event.id {
+                selectedEvent = nil
             }
         }
     }
@@ -221,6 +221,10 @@ private enum AgendaSmartSection: CaseIterable {
 }
 
 private extension AgendaView {
+    struct SelectedEvent: Identifiable {
+        let id: EventRecord.ID
+    }
+
     struct EditorPresentation: Identifiable {
         enum Mode {
             case create
