@@ -26,7 +26,14 @@ struct EventEditorView: View {
                 Section("Details") {
                     TextField("Title", text: $draft.title)
 
-                    DatePicker("Date & time", selection: $draft.timestamp)
+                    if draft.includesTime {
+                        DatePicker("Date & time", selection: $draft.timestamp)
+                    } else {
+                        DatePicker("Date", selection: $draft.timestamp, displayedComponents: .date)
+                    }
+
+                    Toggle("Include time", isOn: $draft.includesTime)
+                        .toggleStyle(.switch)
 
                     TextField("Location", text: Binding($draft.location))
                         .textContentType(.location)
@@ -53,6 +60,11 @@ struct EventEditorView: View {
                         .disabled(draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
+            .onChange(of: draft.includesTime) { includesTime in
+                guard !includesTime else { return }
+                let calendar = Calendar.current
+                draft.timestamp = calendar.startOfDay(for: draft.timestamp)
+            }
         }
     }
 
@@ -64,6 +76,10 @@ struct EventEditorView: View {
             }
             if let notes = event.notes?.trimmingCharacters(in: .whitespacesAndNewlines), notes.isEmpty {
                 event.notes = nil
+            }
+            if !event.includesTime {
+                let calendar = Calendar.current
+                event.timestamp = calendar.startOfDay(for: event.timestamp)
             }
         }
 

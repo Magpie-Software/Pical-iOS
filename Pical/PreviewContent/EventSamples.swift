@@ -33,6 +33,12 @@ extension EventRecord {
                 title: "Family dinner",
                 timestamp: dates[4].addingTimeInterval(18 * 3600),
                 notes: "Host dessert"
+            ),
+            EventRecord(
+                title: "All-day planning",
+                timestamp: dates[2],
+                includesTime: false,
+                notes: "Focus block"
             )
         ]
     }

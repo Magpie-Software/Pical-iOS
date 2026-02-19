@@ -7,10 +7,10 @@ struct EventRowView: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(timeFormatter.string(from: occurrence.startDate))
+            Text(timeLabel)
                 .font(.callout.monospacedDigit())
                 .foregroundStyle(.secondary)
-                .frame(width: 64, alignment: .leading)
+                .frame(width: 82, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(occurrence.title)
@@ -41,8 +41,14 @@ struct EventRowView: View {
         }
         .padding(.vertical, 6)
     }
+
+    private var timeLabel: String {
+        if occurrence.hasExplicitTime {
+            return timeFormatter.string(from: occurrence.startDate)
+        } else {
+            return "All day"
+        }
+    }
 }
 
-#Preview {
-    
-}
+#Preview {}
