@@ -4,7 +4,7 @@ struct AgendaView: View {
     @StateObject var store: EventStore
     @State private var editor: EditorPresentation?
     @State private var selectedEvent: SelectedEvent?
-    @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = false
+    @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = true
     @State private var selectedOccurrence: EventOccurrence?
 
     var body: some View {

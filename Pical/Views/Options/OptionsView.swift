@@ -3,8 +3,8 @@ import SwiftUI
 struct OptionsView: View {
     @Environment(\.openURL) private var openURL
 
-    @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = false
-    @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var recurringWeekdayGrouping = false
+    @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = true
+    @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var recurringWeekdayGrouping = true
     @AppStorage(SettingsKeys.compactLayout) private var compactLayout = false
     @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
     @AppStorage(SettingsKeys.agendaNotificationsEnabled) private var agendaNotificationsEnabled = false
@@ -20,16 +20,16 @@ struct OptionsView: View {
         NavigationStack {
             List {
                 Section("Display") {
-                    Toggle("Compact view", isOn: $compactLayout)
-                        .toggleStyle(.switch)
-                        .accessibilityHint("Hide secondary fields like locations and notes in list rows")
-
                     Toggle("Smart agenda grouping", isOn: $smartAgendaGrouping)
                         .toggleStyle(.switch)
                         .accessibilityHint("Organize events into Today / This Week / Later buckets")
 
                     Toggle("Group recurring by weekday", isOn: $recurringWeekdayGrouping)
                         .toggleStyle(.switch)
+
+                    Toggle("Compact view", isOn: $compactLayout)
+                        .toggleStyle(.switch)
+                        .accessibilityHint("Hide secondary fields like locations and notes in list rows")
                 }
 
                 Section("Notifications") {
