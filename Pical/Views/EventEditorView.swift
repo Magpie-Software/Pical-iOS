@@ -34,14 +34,6 @@ struct EventEditorView: View {
                     TextField("Notes", text: Binding($draft.notes), axis: .vertical)
                 }
 
-                Section("Recurrence") {
-                    Picker("Repeat", selection: $draft.recurrence) {
-                        ForEach(EventRecord.Recurrence.allCases) { recurrence in
-                            Text(recurrence.displayName).tag(recurrence)
-                        }
-                    }
-                }
-
                 if mode == .edit {
                     Section {
                         Button(role: .destructive) { deleteDraft() } label: {

@@ -17,14 +17,12 @@ extension EventRecord {
                 title: "Studio Session",
                 timestamp: dates[1].addingTimeInterval(19 * 3600),
                 location: "South Loft",
-                notes: "Bring pedal board",
-                recurrence: .weekly
+                notes: "Bring pedal board"
             ),
             EventRecord(
                 title: "Newsletter planning",
                 timestamp: dates[2].addingTimeInterval(13 * 3600),
-                notes: "Outline April issue",
-                recurrence: .monthly
+                notes: "Outline April issue"
             ),
             EventRecord(
                 title: "Pickleball",

@@ -49,7 +49,7 @@ final class EventStore: ObservableObject {
         guard let end = calendar.date(byAdding: .day, value: daysAhead, to: start) else { return [] }
         let range = start...end
         return events
-            .flatMap { $0.occurrences(in: range, calendar: calendar) }
+            .compactMap { $0.occurrence(in: range, calendar: calendar) }
             .sorted(by: { $0.startDate < $1.startDate })
     }
 
