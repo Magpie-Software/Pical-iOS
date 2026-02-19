@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var agendaStore = EventStore()
     @State private var store = AgendaDataStore()
     @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
     @AppStorage(SettingsKeys.lastRefreshTimestamp) private var lastRefreshTimestamp: Double = 0
@@ -13,7 +14,7 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            AgendaView(store: EventStore())
+            AgendaView(store: agendaStore)
                 .tabItem {
                     Label("Agenda", systemImage: "list.bullet.rectangle")
                 }
