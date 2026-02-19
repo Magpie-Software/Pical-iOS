@@ -56,24 +56,25 @@ struct EventRowView: View {
                     Text(dateFormatter.string(from: occurrence.startDate))
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(timeLabel)
+                    Text(displayTime)
                         .font(.callout.monospacedDigit())
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Text(timeLabel)
+                Text(displayTime)
                     .font(.callout.monospacedDigit())
                     .foregroundStyle(.secondary)
             }
         }
     }
 
-    private var timeLabel: String {
-        if occurrence.hasExplicitTime {
-            return timeFormatter.string(from: occurrence.startDate)
-        } else {
-            return "--:--"
-        }
+    private var displayTime: String {
+        timeLabel ?? " "
+    }
+
+    private var timeLabel: String? {
+        guard occurrence.hasExplicitTime else { return nil }
+        return timeFormatter.string(from: occurrence.startDate)
     }
 }
 

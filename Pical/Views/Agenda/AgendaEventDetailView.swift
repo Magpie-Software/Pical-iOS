@@ -18,8 +18,10 @@ struct AgendaEventDetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(dateFormatter.string(from: event.timestamp))
                             .foregroundStyle(.secondary)
-                        Text(timeDescription)
-                            .foregroundStyle(.secondary)
+                        if let timeDescription = timeDescription {
+                            Text(timeDescription)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
 
@@ -54,7 +56,7 @@ struct AgendaEventDetailView: View {
                     }
                 }
             }
-            .navigationTitle("Event")
+            .navigationTitle(event.title)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }
@@ -70,12 +72,9 @@ struct AgendaEventDetailView: View {
 
     private var dateFormatter: DateFormatter { DateFormatter.agendaSectionFormatter }
 
-    private var timeDescription: String {
-        if event.includesTime {
-            return DateFormatter.eventTimeFormatter.string(from: event.timestamp)
-        } else {
-            return "All day"
-        }
+    private var timeDescription: String? {
+        guard event.includesTime else { return nil }
+        return DateFormatter.eventTimeFormatter.string(from: event.timestamp)
     }
 }
 

@@ -3,7 +3,7 @@ import SwiftUI
 struct AgendaView: View {
     @StateObject var store: EventStore
     @State private var editor: EditorPresentation?
-    @State private var selectedEvent: EventRecord?
+    @State private var selectedEventID: UUID?
     @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = false
     @State private var selectedOccurrence: EventOccurrence?
 
@@ -47,16 +47,25 @@ struct AgendaView: View {
                     }
                 )
             }
-            .sheet(item: $selectedEvent) { event in
-                AgendaEventDetailView(
-                    event: event,
-                    onEdit: { presentEditor(for: event) },
-                    onDuplicate: { duplicate(event: event) },
-                    onDelete: { delete(event: event) }
-                )
+            .sheet(item: $selectedEventID) { eventID in
+                if let event = store.event(id: eventID) {
+                    AgendaEventDetailView(
+                        event: event,
+                        onEdit: { presentEditor(for: event) },
+                        onDuplicate: { duplicate(event: event) },
+                        onDelete: { delete(event: event) }
+                    )
+                } else {
+                    ContentUnavailableView("Event removed", systemImage: "calendar.badge.exclamationmark", description: Text("It might have been deleted."))
+                }
             }
         }
         .alert(textBinding: $store.lastError)
+        .onChange(of: store.events) { _ in
+            if let id = selectedEventID, store.event(id: id) == nil {
+                selectedEventID = nil
+            }
+        }
     }
 
     private var agendaList: some View {
@@ -100,7 +109,7 @@ struct AgendaView: View {
         if let event = store.event(id: occurrence.eventID) {
             EventRowView(occurrence: occurrence, showDateLabel: smartAgendaGrouping)
                 .contentShape(Rectangle())
-                .onTapGesture { selectedEvent = event }
+                .onTapGesture { selectedEventID = event.id }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button {
                         presentEditor(for: event)
@@ -130,18 +139,20 @@ struct AgendaView: View {
     }
 
     private func duplicate(event: EventRecord) {
-        let copy = EventRecord(
-            title: event.title,
-            timestamp: event.timestamp,
-            location: event.location,
-            notes: event.notes,
-            includesTime: event.includesTime
-        )
+        var copy = event
+        copy.id = UUID()
+        copy.createdAt = .now
+        copy.updatedAt = .now
         Task { await store.upsert(copy) }
     }
 
     private func delete(event: EventRecord) {
-        Task { await store.delete(eventID: event.id) }
+        Task {
+            await store.delete(eventID: event.id)
+            if selectedEventID == event.id {
+                selectedEventID = nil
+            }
+        }
     }
 
     private func presentNewEvent() {

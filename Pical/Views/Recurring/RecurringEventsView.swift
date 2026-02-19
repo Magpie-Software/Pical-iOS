@@ -37,7 +37,8 @@ struct RecurringEventsView: View {
             }
             .sheet(item: $selectedEvent) { event in
                 RecurringEventDetailView(eventID: event.id)
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.large])
+                    .presentationBackgroundInteraction(.enabled)
             }
             .sheet(item: $editingEvent) { event in
                 RecurringEventFormView(event: event) { updated in

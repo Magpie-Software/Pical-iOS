@@ -68,7 +68,7 @@ struct EventDetailView: View {
                         }
                     }
                 }
-                .sheet(isPresented: $isEditing) {
+                .sheet(isPresented: $isEditing, onDismiss: refreshEvent) {
                     EventFormView(event: event) { updatedEvent in
                         store.updateEvent(updatedEvent)
                     }
@@ -79,6 +79,11 @@ struct EventDetailView: View {
                         dismiss()
                     }
                     Button("Cancel", role: .cancel) { }
+                }
+                .onChange(of: store.events) { _ in
+                    if store.events.first(where: { $0.id == eventID }) == nil {
+                        dismiss()
+                    }
                 }
             } else {
                 ContentUnavailableView("Event removed", systemImage: "calendar.badge.exclamationmark", description: Text("It might have been deleted while you were looking at it."))
