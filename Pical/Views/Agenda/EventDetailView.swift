@@ -68,7 +68,7 @@ struct EventDetailView: View {
                         }
                     }
                 }
-                .sheet(isPresented: $isEditing, onDismiss: refreshEvent) {
+                .sheet(isPresented: $isEditing) {
                     EventFormView(event: event) { updatedEvent in
                         store.updateEvent(updatedEvent)
                     }
