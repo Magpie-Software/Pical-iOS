@@ -27,7 +27,7 @@ struct EventEditorView: View {
                     TextField("Title", text: $draft.title)
 
                     if draft.includesTime {
-                        DatePicker("Date & time", selection: $draft.timestamp)
+                        DatePicker("Date", selection: $draft.timestamp) // leave as "Date"
                     } else {
                         DatePicker("Date", selection: $draft.timestamp, displayedComponents: .date)
                     }

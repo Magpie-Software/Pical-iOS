@@ -37,8 +37,8 @@ extension EventRecord {
             EventRecord(
                 title: "All-day planning",
                 timestamp: dates[2],
-                includesTime: false,
-                notes: "Focus block"
+                notes: "Focus block",
+                includesTime: false
             )
         ]
     }
