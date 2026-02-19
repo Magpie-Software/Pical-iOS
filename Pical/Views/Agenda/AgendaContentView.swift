@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct AgendaView: View {
+struct AgendaContentView: View {
     @Environment(EventStore.self) private var store
     @State private var selectedEvent: PicalEvent?
     @State private var editingEvent: PicalEvent?
