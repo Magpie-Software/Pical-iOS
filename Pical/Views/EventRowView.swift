@@ -67,7 +67,7 @@ struct EventRowView: View {
         if occurrence.hasExplicitTime {
             return timeFormatter.string(from: occurrence.startDate)
         } else {
-            return "All day"
+            return "--:--"
         }
     }
 }
