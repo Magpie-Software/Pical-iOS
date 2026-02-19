@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AgendaContentView: View {
-    @Environment(EventStore.self) private var store
+    @Environment(AgendaDataStore.self) private var store
     @State private var selectedEvent: PicalEvent?
     @State private var editingEvent: PicalEvent?
     @State private var isPresentingNewEvent = false
@@ -230,5 +230,5 @@ private extension View {
 
 #Preview {
     AgendaContentView()
-        .environment(EventStore())
+        .environment(AgendaDataStore())
 }

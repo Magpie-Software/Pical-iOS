@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RecurringEventsView: View {
-    @Environment(EventStore.self) private var store
+    @Environment(AgendaDataStore.self) private var store
     @State private var editingEvent: RecurringEvent?
     @State private var selectedEvent: RecurringEvent?
     @State private var isPresentingNew = false
@@ -122,5 +122,5 @@ private struct RecurringWeekdaySection: Identifiable {
 
 #Preview {
     RecurringEventsView()
-        .environment(EventStore())
+        .environment(AgendaDataStore())
 }

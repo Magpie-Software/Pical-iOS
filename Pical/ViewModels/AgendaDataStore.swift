@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 @Observable
-final class EventStore {
+final class AgendaDataStore {
     private(set) var events: [PicalEvent]
     private(set) var recurringEvents: [RecurringEvent]
 

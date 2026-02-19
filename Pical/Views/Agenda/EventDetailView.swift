@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EventDetailView: View {
-    @Environment(EventStore.self) private var store
+    @Environment(AgendaDataStore.self) private var store
     @Environment(\.dismiss) private var dismiss
 
     let eventID: UUID
@@ -89,5 +89,5 @@ struct EventDetailView: View {
 
 #Preview {
     EventDetailView(eventID: PicalEvent.sampleData().first!.id)
-        .environment(EventStore())
+        .environment(AgendaDataStore())
 }

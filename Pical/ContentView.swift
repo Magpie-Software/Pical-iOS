@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var store = EventStore()
+    @State private var store = AgendaDataStore()
     @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
     @AppStorage(SettingsKeys.lastRefreshTimestamp) private var lastRefreshTimestamp: Double = 0
     @AppStorage(SettingsKeys.agendaNotificationsEnabled) private var agendaNotificationsEnabled = false
