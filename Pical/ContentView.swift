@@ -13,7 +13,7 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            AgendaView()
+            AgendaView(store: EventStore())
                 .tabItem {
                     Label("Agenda", systemImage: "list.bullet.rectangle")
                 }

@@ -72,8 +72,8 @@ struct RecurringEventsView: View {
                 }
             }
         }
-        .listStyle(groupByWeekday ? .insetGrouped : .plain)
         .environment(\.editMode, $editMode)
+        .applyRecurringListStyle(groupByWeekday)
     }
 
     private func recurringRow(for event: RecurringEvent) -> some View {
@@ -116,6 +116,17 @@ private struct RecurringWeekdaySection: Identifiable {
 
         return grouped.keys.sorted(by: { $0.sortIndex < $1.sortIndex }).map { key in
             RecurringWeekdaySection(title: key.title, events: grouped[key] ?? [])
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func applyRecurringListStyle(_ useInsetGrouped: Bool) -> some View {
+        if useInsetGrouped {
+            listStyle(.insetGrouped)
+        } else {
+            listStyle(.plain)
         }
     }
 }
