@@ -22,7 +22,5 @@ struct AgendaSectionView: View {
 }
 
 #Preview {
-    List {
-        AgendaSectionView(section: AgendaSection(date: .now, events: EventRecord.samples.flatMap { $0.occurrences(in: Date.now...Date.now.addingTimeInterval(86400)) }), onSelect: { _ in })
-    }
+    
 }

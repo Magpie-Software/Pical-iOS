@@ -44,7 +44,5 @@ struct EventRowView: View {
 }
 
 #Preview {
-    List {
-        EventRowView(occurrence: EventRecord.samples[1].occurrences(in: Date.now...Date.now.addingTimeInterval(86400)).first!)
-    }
+    
 }
