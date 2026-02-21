@@ -4,6 +4,7 @@ enum SettingsKeys {
     static let recurringWeekdayGrouping = "settings.recurringWeekdayGrouping"
     static let compactLayout = "settings.compactLayout"
     static let autoPurgePastEvents = "settings.autoPurgePastEvents"
+    static let autoDecrementRecurrences = "settings.autoDecrementRecurrences"
     static let lastRefreshTimestamp = "settings.lastRefreshTimestamp"
     static let agendaNotificationsEnabled = "settings.agendaNotificationsEnabled"
     static let recurringNotificationsEnabled = "settings.recurringNotificationsEnabled"

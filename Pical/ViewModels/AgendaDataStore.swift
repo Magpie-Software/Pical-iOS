@@ -91,7 +91,7 @@ final class AgendaDataStore {
         recurringEvents.move(fromOffsets: offsets, toOffset: destination)
     }
 
-    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, calendar: Calendar = .current) {
+    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, decrementRecurrences: Bool = true, calendar: Calendar = .current) {
         let startOfDay = calendar.startOfDay(for: referenceDate)
         let previousDay = calendar.date(byAdding: .day, value: -1, to: startOfDay) ?? startOfDay
 
@@ -113,13 +113,16 @@ final class AgendaDataStore {
                         return nil
                     }
 
-                    if event.occurs(on: previousDay, calendar: calendar) {
-                        let next = max(remaining - 1, 0)
-                        if next == 0 {
-                            return nil
+                    if decrementRecurrences {
+                        if event.occurs(on: previousDay, calendar: calendar) {
+                            let next = max(remaining - 1, 0)
+                            if next == 0 {
+                                return nil
+                            }
+                            updatedEvent.stopCondition = .occurrenceCount(next)
                         }
-                        updatedEvent.stopCondition = .occurrenceCount(next)
                     }
+                    // if decrementRecurrences is false, leave remaining unchanged
                 }
             }
 

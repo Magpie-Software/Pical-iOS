@@ -77,6 +77,15 @@ struct OptionsView: View {
                     Toggle("Auto-clear past events", isOn: $autoPurgePastEvents)
                         .toggleStyle(.switch)
                         .accessibilityHint("When enabled, yesterday’s one-off events disappear on the next launch")
+
+                    @AppStorage(SettingsKeys.autoDecrementRecurrences) var autoDecrementRecurrences = true
+                    Toggle("Auto-decrement recurring counts", isOn: Binding(
+                        get: { autoDecrementRecurrences },
+                        set: { autoDecrementRecurrences = $0 }
+                    ))
+                    .toggleStyle(.switch)
+                    .accessibilityHint("When enabled, recurring events with an occurrence count decrement automatically after each occurrence")
+
                     Text("Clearing still happens manually when you disable this toggle.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
