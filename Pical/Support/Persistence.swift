@@ -2,8 +2,8 @@ import Foundation
 
 /// Lightweight JSON persistence for Pical's local data.
 /// Writes two files into Application Support:
-///   - Pical/events.json
-///   - Pical/recurring.json
+///   - Pical/events.json  (stores [EventRecord])
+///   - Pical/recurring.json (stores [RecurringEvent])
 struct PicalPersistence {
 
     // MARK: - Storage URL
@@ -40,13 +40,37 @@ struct PicalPersistence {
 
     // MARK: - Load
 
-    static func loadEvents() -> [PicalEvent] {
+    /// Load persisted EventRecord entries. If the file contains legacy PicalEvent
+    /// objects, attempt a migration by decoding PicalEvent and mapping to EventRecord.
+    static func loadEvents() -> [EventRecord] {
         guard FileManager.default.fileExists(atPath: eventsURL.path) else { return [] }
         do {
             let data = try Data(contentsOf: eventsURL)
-            return try decoder.decode([PicalEvent].self, from: data)
+
+            // First, try the new shape (EventRecord)
+            if let records = try? decoder.decode([EventRecord].self, from: data) {
+                return records
+            }
+
+            // Fallback: try legacy PicalEvent and convert
+            if let legacy = try? decoder.decode([PicalEvent].self, from: data) {
+                return legacy.map { p in
+                    EventRecord(
+                        id: p.id,
+                        title: p.title,
+                        timestamp: p.date,
+                        location: p.location,
+                        notes: p.notes,
+                        includesTime: p.includesTime,
+                        createdAt: Date(),
+                        updatedAt: Date()
+                    )
+                }
+            }
+
+            // If decoding failed, return empty to avoid crashing.
+            return []
         } catch {
-            // Corrupt or incompatible file — start fresh rather than crashing.
             return []
         }
     }
@@ -55,7 +79,7 @@ struct PicalPersistence {
         guard FileManager.default.fileExists(atPath: recurringURL.path) else { return [] }
         do {
             let data = try Data(contentsOf: recurringURL)
-            return try decoder.decode([RecurringEvent].self, from: data)
+            return (try? decoder.decode([RecurringEvent].self, from: data)) ?? []
         } catch {
             return []
         }
@@ -63,7 +87,7 @@ struct PicalPersistence {
 
     // MARK: - Save
 
-    static func save(events: [PicalEvent]) {
+    static func save(events: [EventRecord]) {
         write(events, to: eventsURL)
     }
 
