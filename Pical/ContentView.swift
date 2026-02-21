@@ -9,6 +9,11 @@ struct ContentView: View {
     @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
     @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
     @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
+    @AppStorage(SettingsKeys.displayAppearance) private var displayAppearanceRaw = AppearanceMode.system.rawValue
+
+    private var preferredColorScheme: ColorScheme? {
+        AppearanceMode(rawValue: displayAppearanceRaw)?.colorScheme
+    }
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -29,6 +34,7 @@ struct ContentView: View {
                     Label("Options", systemImage: "slider.horizontal.3")
                 }
         }
+        .preferredColorScheme(preferredColorScheme)
         .environment(store)
         .task { await runDailyRefreshIfNeeded() }
         .onChange(of: scenePhase) { phase in
@@ -62,15 +68,23 @@ struct ContentView: View {
             lastRefreshTimestamp = today.timeIntervalSince1970
         }
 
+        // Ensure agenda events are loaded before scheduling notifications.
+        if !agendaStore.isLoaded {
+            await agendaStore.refresh()
+        }
+
         await scheduleNotificationsForToday()
     }
 
     private func scheduleNotificationsForToday() async {
-        let snapshot = await MainActor.run { (events: store.events, recurring: store.recurringEvents) }
+        // Agenda events come from EventStore (EventRecord); recurring from AgendaDataStore.
+        let agendaEvents = await MainActor.run { agendaStore.events }
+        let recurringEvents = await MainActor.run { store.recurringEvents }
+
         await NotificationScheduler.shared.scheduleNotifications(
             for: Date(),
-            events: snapshot.events,
-            recurringEvents: snapshot.recurring,
+            agendaEvents: agendaEvents,
+            recurringEvents: recurringEvents,
             agendaEnabled: agendaNotificationsEnabled,
             recurringEnabled: recurringNotificationsEnabled,
             agendaTime: agendaNotificationTime,

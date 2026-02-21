@@ -9,4 +9,5 @@ enum SettingsKeys {
     static let recurringNotificationsEnabled = "settings.recurringNotificationsEnabled"
     static let agendaNotificationTime = "settings.agendaNotificationTime"
     static let recurringNotificationTime = "settings.recurringNotificationTime"
+    static let displayAppearance = "settings.displayAppearance"
 }

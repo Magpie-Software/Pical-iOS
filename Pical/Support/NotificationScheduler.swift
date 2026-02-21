@@ -6,9 +6,18 @@ struct NotificationScheduler {
 
     private let center = UNUserNotificationCenter.current()
 
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.timeStyle = .short
+        f.dateStyle = .none
+        return f
+    }()
+
+    // MARK: - Public interface
+
     func scheduleNotifications(
         for date: Date,
-        events: [PicalEvent],
+        agendaEvents: [EventRecord],
         recurringEvents: [RecurringEvent],
         agendaEnabled: Bool,
         recurringEnabled: Bool,
@@ -16,7 +25,7 @@ struct NotificationScheduler {
         recurringTime: Double,
         calendar: Calendar = .current
     ) async {
-        if !(agendaEnabled || recurringEnabled) {
+        guard agendaEnabled || recurringEnabled else {
             await center.removePendingNotificationRequests(withIdentifiers: Identifiers.all)
             return
         }
@@ -25,56 +34,96 @@ struct NotificationScheduler {
 
         await center.removePendingNotificationRequests(withIdentifiers: Identifiers.all)
 
-        let agendaToday = events.filter { calendar.isDate($0.date, inSameDayAs: date) }
+        // Filter to events that fall on `date`
+        let agendaToday = agendaEvents.filter { calendar.isDate($0.timestamp, inSameDayAs: date) }
         let recurringToday = recurringEvents.filter { $0.occurs(on: date, calendar: calendar) }
+
+        // Combine into one notification when both are enabled at the same time
         let sameTime = agendaEnabled && recurringEnabled && abs(agendaTime - recurringTime) < 1
 
         if sameTime {
-            if agendaToday.isEmpty && recurringToday.isEmpty { return }
+            guard !agendaToday.isEmpty || !recurringToday.isEmpty else { return }
             guard let trigger = trigger(for: date, secondsFromMidnight: agendaTime, calendar: calendar) else { return }
-
             let content = UNMutableNotificationContent()
-            content.title = "Today's plan"
-            content.body = combinedSummary(agendaEvents: agendaToday, recurringEvents: recurringToday)
+            content.title = "Your day at a glance"
+            content.body = combinedBody(agendaEvents: agendaToday, recurringEvents: recurringToday)
             content.sound = .default
-
-            let request = UNNotificationRequest(identifier: Identifiers.combined, content: content, trigger: trigger)
-            await add(request)
+            await add(UNNotificationRequest(identifier: Identifiers.combined, content: content, trigger: trigger))
             return
         }
 
-        if agendaEnabled,
-           !agendaToday.isEmpty,
+        if agendaEnabled, !agendaToday.isEmpty,
            let trigger = trigger(for: date, secondsFromMidnight: agendaTime, calendar: calendar) {
             let content = UNMutableNotificationContent()
-            content.title = "Today's agenda"
-            content.body = summary(for: agendaToday)
+            content.title = "Agenda items for today"
+            content.body = agendaBody(for: agendaToday)
             content.sound = .default
-
-            let request = UNNotificationRequest(identifier: Identifiers.agenda, content: content, trigger: trigger)
-            await add(request)
+            await add(UNNotificationRequest(identifier: Identifiers.agenda, content: content, trigger: trigger))
         }
 
-        if recurringEnabled,
-           !recurringToday.isEmpty,
+        if recurringEnabled, !recurringToday.isEmpty,
            let trigger = trigger(for: date, secondsFromMidnight: recurringTime, calendar: calendar) {
             let content = UNMutableNotificationContent()
-            content.title = "Recurring rhythms today"
-            content.body = recurringSummary(for: recurringToday)
+            content.title = "Recurring events today"
+            content.body = recurringBody(for: recurringToday)
             content.sound = .default
-
-            let request = UNNotificationRequest(identifier: Identifiers.recurring, content: content, trigger: trigger)
-            await add(request)
+            await add(UNNotificationRequest(identifier: Identifiers.recurring, content: content, trigger: trigger))
         }
     }
+
+    // MARK: - Body formatting
+
+    /// Bulleted list for agenda items.
+    /// Format: "- Title 6:00 PM" if timed, else "- Title"
+    private func agendaBody(for events: [EventRecord]) -> String {
+        let capped = Array(events.prefix(5))
+        var lines = capped.map { event -> String in
+            if event.includesTime {
+                let time = Self.timeFormatter.string(from: event.timestamp)
+                return "- \(event.title) \(time)"
+            } else {
+                return "- \(event.title)"
+            }
+        }
+        let remainder = events.count - capped.count
+        if remainder > 0 {
+            lines.append("...and \(remainder) more")
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    /// Bulleted list for recurring items. Format: "- Title"
+    private func recurringBody(for events: [RecurringEvent]) -> String {
+        let capped = Array(events.prefix(5))
+        var lines = capped.map { "- \($0.title)" }
+        let remainder = events.count - capped.count
+        if remainder > 0 {
+            lines.append("...and \(remainder) more")
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    /// Combined body when agenda + recurring fire at the same time.
+    private func combinedBody(agendaEvents: [EventRecord], recurringEvents: [RecurringEvent]) -> String {
+        var parts: [String] = []
+        if !agendaEvents.isEmpty {
+            parts.append("Agenda:\n\(agendaBody(for: agendaEvents))")
+        }
+        if !recurringEvents.isEmpty {
+            parts.append("Recurring:\n\(recurringBody(for: recurringEvents))")
+        }
+        return parts.joined(separator: "\n\n")
+    }
+
+    // MARK: - Helpers
 
     private func add(_ request: UNNotificationRequest) async {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("NotificationScheduler failed to schedule: \(error.localizedDescription)")
-            #endif
+#if DEBUG
+            print("NotificationScheduler: failed to schedule '\(request.identifier)': \(error.localizedDescription)")
+#endif
         }
     }
 
@@ -96,7 +145,11 @@ struct NotificationScheduler {
         }
     }
 
-    private func trigger(for date: Date, secondsFromMidnight: Double, calendar: Calendar) -> UNCalendarNotificationTrigger? {
+    private func trigger(
+        for date: Date,
+        secondsFromMidnight: Double,
+        calendar: Calendar
+    ) -> UNCalendarNotificationTrigger? {
         let startOfDay = calendar.startOfDay(for: date)
         let normalized = max(0, min(86_399, secondsFromMidnight))
         let fireDate = startOfDay.addingTimeInterval(normalized)
@@ -106,55 +159,12 @@ struct NotificationScheduler {
         return UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
     }
 
-    private func summary(for events: [PicalEvent]) -> String {
-        if events.count == 1, let event = events.first {
-            return singleAgendaSummary(for: event)
-        }
-        let titles = events.prefix(3).map { $0.title }
-        let remainder = events.count - titles.count
-        var body = titles.joined(separator: ", ")
-        if remainder > 0 {
-            body += " +\(remainder) more"
-        }
-        return body
-    }
-
-    private func recurringSummary(for events: [RecurringEvent]) -> String {
-        if events.count == 1, let event = events.first {
-            return event.title
-        }
-        let titles = events.prefix(3).map { $0.title }
-        let remainder = events.count - titles.count
-        var body = titles.joined(separator: ", ")
-        if remainder > 0 {
-            body += " +\(remainder) more"
-        }
-        return body
-    }
-
-    private func combinedSummary(agendaEvents: [PicalEvent], recurringEvents: [RecurringEvent]) -> String {
-        var parts: [String] = []
-        if !agendaEvents.isEmpty {
-            parts.append("Agenda: \(summary(for: agendaEvents))")
-        }
-        if !recurringEvents.isEmpty {
-            parts.append("Recurring: \(recurringSummary(for: recurringEvents))")
-        }
-        return parts.joined(separator: " • ")
-    }
-
-    private func singleAgendaSummary(for event: PicalEvent) -> String {
-        if let timeDescription = event.timeDescription {
-            return "\(event.title) at \(timeDescription)"
-        }
-        return event.title
-    }
+    // MARK: - Identifiers
 
     private enum Identifiers {
-        static let agenda = "notifications.agenda.daily"
+        static let agenda   = "notifications.agenda.daily"
         static let recurring = "notifications.recurring.daily"
-        static let combined = "notifications.combined.daily"
-
+        static let combined  = "notifications.combined.daily"
         static var all: [String] { [agenda, recurring, combined] }
     }
 }
