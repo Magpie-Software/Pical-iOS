@@ -39,13 +39,6 @@ struct OptionsView: View {
                     Toggle("Compact view", isOn: $compactLayout)
                         .toggleStyle(.switch)
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
-
-                    Picker("Appearance", selection: $displayAppearanceRaw) {
-                        ForEach(AppearanceMode.allCases) { mode in
-                            Text(mode.label).tag(mode.rawValue)
-                        }
-                    }
-                    .pickerStyle(.segmented)
                 }
 
                 Section("Notifications") {
