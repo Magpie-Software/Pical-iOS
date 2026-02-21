@@ -52,8 +52,8 @@ struct PicalPersistence {
                 return records
             }
 
-            // Fallback: try legacy PicalEvent and convert
-            if let legacy = try? decoder.decode([PicalEvent].self, from: data) {
+            // Fallback: try legacy PicalEvent shape and convert
+            if let legacy = try? decoder.decode([LegacyPicalEvent].self, from: data) {
                 return legacy.map { p in
                     EventRecord(
                         id: p.id,
@@ -109,3 +109,16 @@ struct PicalPersistence {
         }
     }
 }
+
+// MARK: - Legacy types
+
+private struct LegacyPicalEvent: Codable {
+    var id: UUID
+    var title: String
+    var date: Date
+    var endDate: Date?
+    var includesTime: Bool
+    var location: String?
+    var notes: String?
+}
+
