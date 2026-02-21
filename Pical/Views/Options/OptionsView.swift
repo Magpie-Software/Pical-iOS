@@ -8,6 +8,7 @@ struct OptionsView: View {
     @AppStorage(SettingsKeys.recurringWeekdayGrouping) private var recurringWeekdayGrouping = true
     @AppStorage(SettingsKeys.compactLayout) private var compactLayout = false
     @AppStorage(SettingsKeys.autoPurgePastEvents) private var autoPurgePastEvents = true
+    @AppStorage(SettingsKeys.displayAppearance) private var displayAppearanceRaw = AppearanceMode.system.rawValue
     @AppStorage(SettingsKeys.agendaNotificationsEnabled) private var agendaNotificationsEnabled = false
     @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
     @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
@@ -38,6 +39,13 @@ struct OptionsView: View {
                     Toggle("Compact view", isOn: $compactLayout)
                         .toggleStyle(.switch)
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
+
+                    Picker("Appearance", selection: $displayAppearanceRaw) {
+                        ForEach(AppearanceMode.allCases) { mode in
+                            Text(mode.label).tag(mode.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
                 }
 
                 Section("Notifications") {
