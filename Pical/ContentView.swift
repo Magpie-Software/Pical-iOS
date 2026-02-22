@@ -63,7 +63,7 @@ struct ContentView: View {
 
         if lastRefreshTimestamp == 0 || !calendar.isDate(lastRefreshDate, inSameDayAs: today) {
             await MainActor.run {
-                store.dailyRefresh(referenceDate: today, purgePastEvents: autoPurgePastEvents, calendar: calendar)
+                store.dailyRefresh(referenceDate: today, purgePastEvents: autoPurgePastEvents, decrementRecurrences: UserDefaults.standard.bool(forKey: SettingsKeys.autoDecrementRecurrences), calendar: calendar)
             }
             lastRefreshTimestamp = today.timeIntervalSince1970
         }
