@@ -119,7 +119,13 @@ final class AgendaDataStore {
                     }
 
                     if decrementRecurrences {
-                        if event.occurs(on: previousDay, calendar: calendar) {
+                        // Check for occurrence on previous day. Some recurrence patterns (monthly ordinal)
+                        // can be sensitive to the exact time; check both the start of the previous day
+                        // and the previous day's midpoint to be more robust across DST/timezone quirks.
+                        let yesterdayMidpoint = calendar.date(byAdding: .hour, value: 12, to: previousDay) ?? previousDay
+                        let occurredYesterday = event.occurs(on: previousDay, calendar: calendar) || event.occurs(on: yesterdayMidpoint, calendar: calendar)
+
+                        if occurredYesterday {
                             let next = max(remaining - 1, 0)
                             if next == 0 {
                                 return nil
