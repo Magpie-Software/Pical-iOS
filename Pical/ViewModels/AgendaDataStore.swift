@@ -105,8 +105,13 @@ final class AgendaDataStore {
             if let stopCondition = event.stopCondition {
                 switch stopCondition {
                 case let .endDate(date):
-                    if calendar.startOfDay(for: date) < startOfDay {
-                        return nil
+                    // Respect the decrementRecurrences toggle for endDate-based stop conditions.
+                    // When the toggle is disabled we should not auto-delete recurring events
+                    // even if their end date has passed.
+                    if decrementRecurrences {
+                        if calendar.startOfDay(for: date) < startOfDay {
+                            return nil
+                        }
                     }
                 case let .occurrenceCount(remaining):
                     if remaining <= 0 {
