@@ -60,10 +60,43 @@ final class AgendaDataStore {
     // MARK: - Recurring events
 
     func addRecurring(_ event: RecurringEvent) {
+        // If the recurring event has an end date in the past and auto-purge is enabled,
+        // do not add it (mirror the agenda one-off behavior).
+        if let stop = event.stopCondition {
+            switch stop {
+            case let .endDate(date):
+                let startOfDay = Calendar.current.startOfDay(for: Date())
+                if UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents) {
+                    if Calendar.current.startOfDay(for: date) < startOfDay {
+                        return
+                    }
+                }
+            default:
+                break
+            }
+        }
+
         recurringEvents.append(event)
     }
 
     func updateRecurring(_ event: RecurringEvent) {
+        // Mirror addRecurring: if updated event now has an endDate in the past and auto-purge
+        // is enabled, remove it instead of updating.
+        if let stop = event.stopCondition {
+            switch stop {
+            case let .endDate(date):
+                let startOfDay = Calendar.current.startOfDay(for: Date())
+                if UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents) {
+                    if Calendar.current.startOfDay(for: date) < startOfDay {
+                        deleteRecurring(event)
+                        return
+                    }
+                }
+            default:
+                break
+            }
+        }
+
         guard let index = recurringEvents.firstIndex(where: { $0.id == event.id }) else { return }
         recurringEvents[index] = event
     }
