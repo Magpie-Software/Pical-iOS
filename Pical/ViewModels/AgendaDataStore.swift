@@ -91,9 +91,8 @@ final class AgendaDataStore {
         recurringEvents.move(fromOffsets: offsets, toOffset: destination)
     }
 
-    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, decrementRecurrences: Bool = true, calendar: Calendar = .current) {
+    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, calendar: Calendar = .current) {
         let startOfDay = calendar.startOfDay(for: referenceDate)
-        let previousDay = calendar.date(byAdding: .day, value: -1, to: startOfDay) ?? startOfDay
 
         if purgePastEvents {
             events.removeAll { calendar.startOfDay(for: $0.date) < startOfDay }
@@ -105,33 +104,16 @@ final class AgendaDataStore {
             if let stopCondition = event.stopCondition {
                 switch stopCondition {
                 case let .endDate(date):
-                    // Respect the decrementRecurrences toggle for endDate-based stop conditions.
-                    // When the toggle is disabled we should not auto-delete recurring events
-                    // even if their end date has passed.
-                    if decrementRecurrences {
+                    // Remove recurring events whose end date is in the past when purgePastEvents (auto-clear) is enabled.
+                    if purgePastEvents {
                         if calendar.startOfDay(for: date) < startOfDay {
                             return nil
                         }
                     }
                 case let .occurrenceCount(remaining):
+                    // Do not auto-decrement occurrence counts in this version. Only remove if count already <= 0.
                     if remaining <= 0 {
                         return nil
-                    }
-
-                    if decrementRecurrences {
-                        // Check for occurrence on previous day. Some recurrence patterns (monthly ordinal)
-                        // can be sensitive to the exact time; check both the start of the previous day
-                        // and the previous day's midpoint to be more robust across DST/timezone quirks.
-                        let yesterdayMidpoint = calendar.date(byAdding: .hour, value: 12, to: previousDay) ?? previousDay
-                        let occurredYesterday = event.occurs(on: previousDay, calendar: calendar) || event.occurs(on: yesterdayMidpoint, calendar: calendar)
-
-                        if occurredYesterday {
-                            let next = max(remaining - 1, 0)
-                            if next == 0 {
-                                return nil
-                            }
-                            updatedEvent.stopCondition = .occurrenceCount(next)
-                        }
                     }
                     // if decrementRecurrences is false, leave remaining unchanged
                 }
