@@ -77,6 +77,14 @@ final class AgendaDataStore {
         }
 
         recurringEvents.append(event)
+
+        // Ensure immediate purge/refresh so changes to end dates are reflected instantly
+        Task {
+            await MainActor.run {
+                let purge = UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents)
+                self.dailyRefresh(referenceDate: Date(), purgePastEvents: purge, calendar: .current)
+            }
+        }
     }
 
     func updateRecurring(_ event: RecurringEvent) {
@@ -99,6 +107,14 @@ final class AgendaDataStore {
 
         guard let index = recurringEvents.firstIndex(where: { $0.id == event.id }) else { return }
         recurringEvents[index] = event
+
+        // Ensure immediate purge/refresh so changes to end dates are reflected instantly
+        Task {
+            await MainActor.run {
+                let purge = UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents)
+                self.dailyRefresh(referenceDate: Date(), purgePastEvents: purge, calendar: .current)
+            }
+        }
     }
 
     func deleteRecurring(_ event: RecurringEvent) {
