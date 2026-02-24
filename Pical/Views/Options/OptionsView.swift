@@ -140,7 +140,7 @@ private struct OptionsLinkRow: View {
             HStack(spacing: 12) {
                 Image(systemName: systemImage)
                     .foregroundStyle(Theme.accent)
-                    .font(.body)
+                    .font(.system(size: 18, weight: .semibold))
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {
