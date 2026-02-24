@@ -167,22 +167,27 @@ private struct OptionsLinkRow: View {
                 // Ko-fi is wider; force a consistent square frame to keep spacing uniform
                 let iconFrameSize: CGFloat = systemImage == "cup.and.saucer.fill" ? 20 : 22
 
-                baseIcon
+                // Render the icon as a template and paint it with the header gradient.
+                let maskIcon = baseIcon.renderingMode(.template)
                     .frame(width: iconFrameSize, height: iconFrameSize)
-                    .overlay(
-                        // animate gradient only for donation/support icons
-                        Theme.headerGradient
-                            .frame(width: 80, height: iconFrameSize)
-                            .offset(x: animateGradient ? 40 : -40)
-                            .mask(baseIcon)
-                    )
-                    .onAppear {
-                        if ["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) {
-                            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                                animateGradient = true
-                            }
+
+                ZStack {
+                    // invisible base to keep spacing
+                    maskIcon.opacity(0)
+                    // gradient masked by the icon shape
+                    Theme.headerGradient
+                        .frame(width: 80, height: iconFrameSize)
+                        .offset(x: animateGradient ? 40 : -40)
+                        .mask(maskIcon)
+                }
+                .onAppear {
+                    // animate for donation/support rows and for acknowledgments when fancy theme is on
+                    if ["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || (systemImage=="list.star" && !Theme.isSimple) {
+                        withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                            animateGradient = true
                         }
                     }
+                }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {
