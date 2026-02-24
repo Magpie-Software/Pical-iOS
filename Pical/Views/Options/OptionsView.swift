@@ -161,24 +161,26 @@ private struct OptionsLinkRow: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 // Icon: use a masked gradient that scrolls subtly for Support & Donations rows
-                let baseIcon = Image(systemName: systemImage)
-                    .font(.system(size: 20, weight: .semibold))
+                let baseImage = Image(systemName: systemImage)
 
                 // Ko-fi is wider; force a consistent square frame to keep spacing uniform
                 let iconFrameSize: CGFloat = systemImage == "cup.and.saucer.fill" ? 20 : 22
 
-                // Render the icon as a template and paint it with the header gradient.
-                let maskIcon = baseIcon.renderingMode(.template)
-                    .frame(width: iconFrameSize, height: iconFrameSize)
+                // Create a template-mode image for masking the gradient (Image, not some View)
+                let maskIcon = Image(systemName: systemImage).renderingMode(.template)
 
                 ZStack {
                     // invisible base to keep spacing
-                    maskIcon.opacity(0)
+                    maskIcon
+                        .font(.system(size: 20, weight: .semibold))
+                        .frame(width: iconFrameSize, height: iconFrameSize)
+                        .opacity(0)
+
                     // gradient masked by the icon shape
                     Theme.headerGradient
                         .frame(width: 80, height: iconFrameSize)
                         .offset(x: animateGradient ? 40 : -40)
-                        .mask(maskIcon)
+                        .mask(maskIcon.font(.system(size: 20, weight: .semibold)))
                 }
                 .onAppear {
                     // animate for donation/support rows and for acknowledgments when fancy theme is on
