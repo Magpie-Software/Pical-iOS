@@ -18,8 +18,18 @@ struct RecurringEventsView: View {
                     recurringList
                 }
             }
-            .navigationTitle("Recurring")
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    if Theme.isSimple {
+                        Text("Recurring")
+                            .font(.headline)
+                            .foregroundColor(Color.primary)
+                    } else {
+                        Text("Recurring")
+                            .font(.headline)
+                            .overlay(Theme.headerGradient.mask(Text("Recurring").font(.headline)))
+                    }
+                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     if !groupByWeekday {
                         Button(editMode.isEditingList ? "Done" : "Manage") {
