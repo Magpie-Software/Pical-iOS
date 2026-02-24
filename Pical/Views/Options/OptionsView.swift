@@ -160,36 +160,9 @@ private struct OptionsLinkRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                // Icon: use a masked gradient that scrolls subtly for Support & Donations rows
-                let baseImage = Image(systemName: systemImage)
-
-                // Ko-fi is wider; force a consistent square frame to keep spacing uniform
-                let iconFrameSize: CGFloat = systemImage == "cup.and.saucer.fill" ? 20 : 22
-
-                // Create a template-mode image for masking the gradient (Image, not some View)
-                let maskIcon = Image(systemName: systemImage).renderingMode(.template)
-
-                ZStack {
-                    // invisible base to keep spacing
-                    maskIcon
-                        .font(.system(size: 20, weight: .semibold))
-                        .frame(width: iconFrameSize, height: iconFrameSize)
-                        .opacity(0)
-
-                    // gradient masked by the icon shape
-                    Theme.headerGradient
-                        .frame(width: 80, height: iconFrameSize)
-                        .offset(x: animateGradient ? 40 : -40)
-                        .mask(maskIcon.font(.system(size: 20, weight: .semibold)))
-                }
-                .onAppear {
-                    // animate for donation/support rows and for acknowledgments when fancy theme is on
-                    if ["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || (systemImage=="list.star" && !Theme.isSimple) {
-                        withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                            animateGradient = true
-                        }
-                    }
-                }
+                Image(systemName: systemImage)
+                    .foregroundStyle(Theme.accent)
+                    .font(.system(size: 24, weight: .semibold))
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {
