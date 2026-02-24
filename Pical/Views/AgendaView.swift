@@ -21,18 +21,9 @@ struct AgendaView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .navigationTitle("Agenda")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if Theme.isSimple {
-                        Text("Agenda")
-                            .font(.headline)
-                            .foregroundColor(Color.primary)
-                    } else {
-                        Text("Agenda")
-                            .font(.headline)
-                            .overlay(Theme.headerGradient.mask(Text("Agenda").font(.headline)))
-                    }
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: presentNewEvent) {
                         Image(systemName: "plus")

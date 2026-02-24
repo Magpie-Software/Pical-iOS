@@ -125,18 +125,8 @@ struct OptionsView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if Theme.isSimple {
-                        Text("Options")
-                            .font(.headline)
-                            .foregroundColor(Color.primary)
-                    } else {
-                        Text("Options")
-                            .font(.headline)
-                            .overlay(Theme.headerGradient.mask(Text("Options").font(.headline)))
-                    }
-                }
+            .navigationTitle("Options")
+            .navigationBarTitleDisplayMode(.large)
             }
         }
     }
