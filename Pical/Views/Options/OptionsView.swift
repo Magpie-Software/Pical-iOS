@@ -41,9 +41,9 @@ struct OptionsView: View {
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
 
                     @AppStorage(SettingsKeys.themeEnabled) var themeEnabled = false
-                    Toggle("Use Pical theme", isOn: $themeEnabled)
+                    Toggle("Simple theme", isOn: $themeEnabled)
                         .toggleStyle(.switch)
-                        .accessibilityHint("When enabled, Pical uses the custom brand theme colors; otherwise system defaults are used")
+                        .accessibilityHint("When enabled, Pical uses a toned-back simple theme; when off, Pical shows the full visual treatment with richer gradients and splash graphics")
                 }
 
                 Section("Notifications") {
