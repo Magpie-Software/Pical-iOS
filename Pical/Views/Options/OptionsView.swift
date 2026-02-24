@@ -137,16 +137,23 @@ private struct OptionsLinkRow: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 4) {
-                Label(title, systemImage: systemImage)
-                if let detail {
-                    Text(detail)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                Image(systemName: systemImage)
+                    .foregroundColor(Theme.accent)
+                    .font(.body)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                    if let detail {
+                        Text(detail)
+                            .font(.caption)
+                            .foregroundColor(Theme.textSecondary)
+                    }
                 }
+                Spacer()
             }
+            .padding(.vertical, 6)
         }
-        .tint(.primary)
+        .buttonStyle(.plain)
     }
 }
 
