@@ -31,8 +31,10 @@ struct RecurringEventsView: View {
                     Button {
                         isPresentingNew = true
                     } label: {
-                        Label("Add recurring", systemImage: "plus")
+                        Image(systemName: "plus")
+                            .font(.system(size: 18, weight: .semibold))
                     }
+                    .accessibilityLabel("Add recurring")
                 }
             }
             .sheet(item: $selectedEvent) { event in
