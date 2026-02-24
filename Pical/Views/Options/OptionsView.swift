@@ -157,11 +157,11 @@ private struct OptionsLinkRow: View {
     let action: () -> Void
 
     var body: some View {
-        let shouldAnimate = ["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || (systemImage == "list.star" && !Theme.isSimple)
+        let useGradient = ["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || (systemImage == "list.star" && !Theme.isSimple)
 
         Button(action: action) {
             HStack(spacing: 12) {
-                GradientSymbolIcon(systemName: systemImage, size: 20, weight: .semibold, frameSize: 22, animate: shouldAnimate)
+                if useGradient { GradientSymbolIcon(systemName: systemImage, size: 20, weight: .semibold, frameSize: 22, animate: false) } else { Image(systemName: systemImage).foregroundStyle(Theme.accent).font(.system(size:20, weight:.semibold)) }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {
@@ -230,16 +230,14 @@ private struct GuideLink: Identifiable {
     ]
 }
 
-// GradientSymbolIcon: renders a SF Symbol filled with Theme.headerGradient. When animate=true
-// the gradient uses a larger frame (frameSize * 3) and scrolls horizontally. Uses drawingGroup() to stabilize rendering.
+// GradientSymbolIcon: renders a SF Symbol filled with Theme.headerGradient.
+// Previously supported animation; scrolling/animation removed — this renders a static gradient.
 private struct GradientSymbolIcon: View {
     let systemName: String
     let size: CGFloat
     let weight: Font.Weight
     let frameSize: CGFloat
-    let animate: Bool
-
-    @State private var offsetX: CGFloat = -40
+    let animate: Bool // kept for API compatibility; no scrolling occurs
 
     var body: some View {
         let symbol = Image(systemName: systemName).renderingMode(.template).font(.system(size: size, weight: weight))
@@ -247,17 +245,12 @@ private struct GradientSymbolIcon: View {
             // invisible placeholder for layout
             symbol.frame(width: frameSize, height: frameSize).opacity(0)
 
+            // Use a wider gradient when animate==true to give a bit more visual depth,
+            // but render it statically (no offset animation).
             Theme.headerGradient
                 .frame(width: animate ? frameSize * 3 : frameSize, height: frameSize)
-                .offset(x: offsetX)
                 .mask(symbol)
                 .drawingGroup()
-                .onAppear {
-                    guard animate else { return }
-                    withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                        offsetX = frameSize * 1.5
-                    }
-                }
         }
     }
 }
