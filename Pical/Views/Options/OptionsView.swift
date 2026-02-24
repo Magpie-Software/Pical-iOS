@@ -118,7 +118,19 @@ struct OptionsView: View {
                     }
                 }
             }
-            .navigationTitle("Options")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    if Theme.isSimple {
+                        Text("Options")
+                            .font(.headline)
+                            .foregroundColor(Color.primary)
+                    } else {
+                        Text("Options")
+                            .font(.headline)
+                            .overlay(Theme.headerGradient.mask(Text("Options").font(.headline)))
+                    }
+                }
+            }
         }
     }
 
