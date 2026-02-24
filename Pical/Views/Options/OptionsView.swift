@@ -159,19 +159,20 @@ private struct OptionsLinkRow: View {
     var body: some View {
         // Show a static gradient only when NOT in Simple theme. In Simple theme, use solid BalticBlue (Theme.accent).
         let useGradient = !Theme.isSimple && (["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || systemImage == "list.star")
-        let isKoFi = systemImage == "cup.and.saucer.fill"
-        let iconSize: CGFloat = isKoFi ? 18 : 20
-        let iconFrame: CGFloat = isKoFi ? 18 : 22
+        let iconSize: CGFloat = 20
+        let iconFrame: CGFloat = 22
 
         Button(action: action) {
             HStack(spacing: 12) {
                 if useGradient {
                     GradientSymbolIcon(systemName: systemImage, size: iconSize, weight: .semibold, frameSize: iconFrame, animate: false)
+                        .padding(.leading, 2)
                 } else {
                     Image(systemName: systemImage)
                         .foregroundStyle(Theme.accent)
                         .font(.system(size: iconSize, weight:.semibold))
                         .frame(width: iconFrame, height: iconFrame)
+                        .padding(.leading, 2)
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
