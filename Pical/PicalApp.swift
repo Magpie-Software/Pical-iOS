@@ -8,6 +8,15 @@ struct PicalApp: App {
             SettingsKeys.smartAgendaGrouping: true,
             SettingsKeys.compactLayout: false
         ])
+
+        // Make the large navigation title use the brand BalticBlue color.
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithDefaultBackground()
+        let largeColor = UIColor(named: "BalticBlue") ?? UIColor.systemBlue
+        navAppearance.largeTitleTextAttributes = [.foregroundColor: largeColor]
+        navAppearance.titleTextAttributes = [.foregroundColor: largeColor]
+        UINavigationBar.appearance().standardAppearance = navAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
     }
 
     var body: some Scene {
