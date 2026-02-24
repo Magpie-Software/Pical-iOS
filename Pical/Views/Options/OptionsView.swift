@@ -201,7 +201,7 @@ private struct OptionsLink: Identifiable {
         OptionsLink(
             title: "Ko-fi",
             detail: "One-off tips for MagWare/Pical",
-            icon: "cup.and.saucer.fill",
+            icon: "mug.fill",
             url: URL(string: "https://ko-fi.com/magware")!
         ),
         OptionsLink(
