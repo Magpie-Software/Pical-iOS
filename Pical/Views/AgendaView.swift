@@ -22,6 +22,7 @@ struct AgendaView: View {
                 }
             }
             .navigationTitle("Agenda")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: presentNewEvent) {

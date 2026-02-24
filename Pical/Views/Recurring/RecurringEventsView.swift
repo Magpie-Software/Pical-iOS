@@ -19,6 +19,7 @@ struct RecurringEventsView: View {
                 }
             }
             .navigationTitle("Recurring")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if !groupByWeekday {
@@ -31,8 +32,10 @@ struct RecurringEventsView: View {
                     Button {
                         isPresentingNew = true
                     } label: {
-                        Label("Add recurring", systemImage: "plus")
+                        Image(systemName: "plus")
+                            .font(.system(size: 18, weight: .semibold))
                     }
+                    .accessibilityLabel("Add recurring")
                 }
             }
             .sheet(item: $selectedEvent) { event in
@@ -58,7 +61,10 @@ struct RecurringEventsView: View {
         List {
             if groupByWeekday {
                 ForEach(RecurringWeekdaySection.build(from: store.recurringEvents)) { section in
-                    Section(header: Text(section.title)) {
+                    Section(header: Text(section.title)
+                                .font(.headline)
+                                .textCase(.uppercase)
+                                .foregroundStyle(.secondary)) {
                         ForEach(section.events) { event in
                             recurringRow(for: event)
                         }
