@@ -31,6 +31,7 @@ struct OptionsView: View {
 
                     Toggle("Smart agenda grouping", isOn: $smartAgendaGrouping)
                         .toggleStyle(.switch)
+                        .tint(Theme.splash)
                         .accessibilityHint("Organize events into Today / This Week / Later buckets")
 
                     Toggle("Group recurring by weekday", isOn: $recurringWeekdayGrouping)
