@@ -5,10 +5,24 @@ enum Theme {
     /// When it's OFF we show a fancier Pical theme (richer gradient/splash).
     static var isSimple: Bool { UserDefaults.standard.bool(forKey: SettingsKeys.themeEnabled) }
 
-    static var background: Color { isSimple ? Color("Ivory") : Color("Ivory") }
-    static var panel: Color { isSimple ? Color("ShadowGray") : Color("ShadowGray") }
-    static var textPrimary: Color { isSimple ? Color("Ivory") : Color("Ivory") }
-    static var textSecondary: Color { isSimple ? Color("ColorTextSecondary") : Color("ColorTextSecondary") }
+    static var background: Color { Color(UIColor { trait in
+        if trait.userInterfaceStyle == .dark {
+            return UIColor(named: "Onyx") ?? UIColor.systemBackground
+        } else {
+            return UIColor(named: "Ivory") ?? UIColor.systemBackground
+        }
+    }) }
+
+    static var panel: Color { Color(UIColor { trait in
+        if trait.userInterfaceStyle == .dark {
+            return UIColor(named: "Onyx") ?? UIColor.secondarySystemBackground
+        } else {
+            return UIColor(named: "Ivory") ?? UIColor.secondarySystemBackground
+        }
+    }) }
+
+    static var textPrimary: Color { Color("Ivory") }
+    static var textSecondary: Color { Color("ColorTextSecondary") }
 
     // Accent/splash treatment differs between simple vs. fancy
     // Keep accent and splash consistent regardless of simple/fancy mode
