@@ -154,7 +154,7 @@ private struct OptionsLinkRow: View {
             HStack(spacing: 12) {
                 Image(systemName: systemImage)
                     .foregroundStyle(Theme.accent)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: 24, weight: .semibold))
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {
@@ -165,7 +165,7 @@ private struct OptionsLinkRow: View {
                 }
                 Spacer()
             }
-            .padding(.vertical, 6)
+            .padding(.vertical, 4)
         }
         .buttonStyle(.plain)
     }
