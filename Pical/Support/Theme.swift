@@ -5,23 +5,10 @@ enum Theme {
     /// When it's OFF we show a fancier Pical theme (richer gradient/splash).
     static var isSimple: Bool { UserDefaults.standard.bool(forKey: SettingsKeys.themeEnabled) }
 
-    // Main content area background: Onyx (dark) / MintCream (light)
-    static var background: Color { Color(UIColor { trait in
-        if trait.userInterfaceStyle == .dark {
-            return UIColor(named: "Onyx") ?? UIColor.systemBackground
-        } else {
-            return UIColor(named: "MintCream") ?? UIColor.systemBackground
-        }
-    }) }
-
-    // Panel background (cards, lists): ShadowGray (dark) / Ivory (light)
-    static var panel: Color { Color(UIColor { trait in
-        if trait.userInterfaceStyle == .dark {
-            return UIColor(named: "ShadowGray") ?? UIColor.secondarySystemBackground
-        } else {
-            return UIColor(named: "Ivory") ?? UIColor.secondarySystemBackground
-        }
-    }) }
+    // Use named color assets so designers/developers can update them in the asset catalog.
+    // Asset names expected: "Onyx", "MintCream", "ShadowGray", "Ivory".
+    static var background: Color { Color("MintCream") }
+    static var panel: Color { Color("Ivory") }
 
     static var textPrimary: Color { Color("Ivory") }
     static var textSecondary: Color { Color("ColorTextSecondary") }
