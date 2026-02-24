@@ -11,4 +11,5 @@ enum SettingsKeys {
     static let agendaNotificationTime = "settings.agendaNotificationTime"
     static let recurringNotificationTime = "settings.recurringNotificationTime"
     static let displayAppearance = "settings.displayAppearance"
+    static let themeEnabled = "settings.themeEnabled"
 }
