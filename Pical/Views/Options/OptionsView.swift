@@ -141,7 +141,7 @@ struct OptionsView: View {
         let startOfDay = calendar.startOfDay(for: date)
         return max(0, min(86_399, date.timeIntervalSince(startOfDay)))
     }
-}
+
 
 private struct OptionsLinkRow: View {
     let title: String
