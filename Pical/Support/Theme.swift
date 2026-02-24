@@ -11,23 +11,9 @@ enum Theme {
     static var textSecondary: Color { isSimple ? Color("ColorTextSecondary") : Color("ColorTextSecondary") }
 
     // Accent/splash treatment differs between simple vs. fancy
-    static var accent: Color {
-        if isSimple {
-            // toned-back accent (slightly muted)
-            Color("BalticBlue").opacity(0.9)
-        } else {
-            // full-strength brand accent
-            Color("BalticBlue")
-        }
-    }
-
-    static var splash: Color {
-        if isSimple {
-            Color("JungleTeal").opacity(0.9)
-        } else {
-            Color("JungleTeal")
-        }
-    }
+    // Keep accent and splash consistent regardless of simple/fancy mode
+    static var accent: Color { Color("BalticBlue") }
+    static var splash: Color { Color("JungleTeal") }
 
     static var headerGradient: LinearGradient {
         if isSimple {
