@@ -22,7 +22,7 @@ struct OptionsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Display") {
+                Section(header: Text("Display").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
                     Picker("Appearance", selection: $displayAppearance) {
                         ForEach(AppearanceMode.allCases) { mode in
                             Text(mode.label).tag(mode.rawValue)
@@ -50,7 +50,7 @@ struct OptionsView: View {
                         .accessibilityHint("When enabled, Pical uses a toned-back simple theme; when off, Pical shows the full visual treatment with richer gradients and splash graphics")
                 }
 
-                Section("Notifications") {
+                Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
                     Toggle("Agenda reminders", isOn: $agendaNotificationsEnabled)
                         .tint(Theme.splash)
                     if agendaNotificationsEnabled {
@@ -84,7 +84,7 @@ struct OptionsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Section("Maintenance") {
+                Section(header: Text("Maintenance").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
                     Toggle("Auto-clear past events", isOn: $autoPurgePastEvents)
                         .tint(Theme.splash)
                         .toggleStyle(.switch)
@@ -93,7 +93,7 @@ struct OptionsView: View {
 
                 }
 
-                Section("Support & Donations") {
+                Section(header: Text("Support & Donations").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
                     ForEach(donationLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -101,7 +101,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section("Guides & Docs") {
+                Section(header: Text("Guides & Docs").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
                     ForEach(guideLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -109,7 +109,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section("Feedback & Bug Reports") {
+                Section(header: Text("Feedback & Bug Reports").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
                     ForEach(feedbackLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -117,7 +117,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section("Acknowledgments") {
+                Section(header: Text("Acknowledgments").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
                     NavigationLink {
                         AcknowledgmentsView()
                     } label: {
