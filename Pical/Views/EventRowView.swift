@@ -42,6 +42,7 @@ struct EventRowView: View {
 
             if occurrence.isRecurring {
                 Image(systemName: "arrow.triangle.2.circlepath")
+                    .font(.system(size: 16, weight: .regular))
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }

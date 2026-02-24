@@ -60,12 +60,61 @@ final class AgendaDataStore {
     // MARK: - Recurring events
 
     func addRecurring(_ event: RecurringEvent) {
+        // If the recurring event has an end date in the past and auto-purge is enabled,
+        // do not add it (mirror the agenda one-off behavior).
+        if let stop = event.stopCondition {
+            switch stop {
+            case let .endDate(date):
+                let startOfDay = Calendar.current.startOfDay(for: Date())
+                if UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents) {
+                    if Calendar.current.startOfDay(for: date) < startOfDay {
+                        return
+                    }
+                }
+            default:
+                break
+            }
+        }
+
         recurringEvents.append(event)
+
+        // Ensure immediate purge/refresh so changes to end dates are reflected instantly
+        Task {
+            await MainActor.run {
+                let purge = UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents)
+                self.dailyRefresh(referenceDate: Date(), purgePastEvents: purge, calendar: .current)
+            }
+        }
     }
 
     func updateRecurring(_ event: RecurringEvent) {
+        // Mirror addRecurring: if updated event now has an endDate in the past and auto-purge
+        // is enabled, remove it instead of updating.
+        if let stop = event.stopCondition {
+            switch stop {
+            case let .endDate(date):
+                let startOfDay = Calendar.current.startOfDay(for: Date())
+                if UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents) {
+                    if Calendar.current.startOfDay(for: date) < startOfDay {
+                        deleteRecurring(event)
+                        return
+                    }
+                }
+            default:
+                break
+            }
+        }
+
         guard let index = recurringEvents.firstIndex(where: { $0.id == event.id }) else { return }
         recurringEvents[index] = event
+
+        // Ensure immediate purge/refresh so changes to end dates are reflected instantly
+        Task {
+            await MainActor.run {
+                let purge = UserDefaults.standard.bool(forKey: SettingsKeys.autoPurgePastEvents)
+                self.dailyRefresh(referenceDate: Date(), purgePastEvents: purge, calendar: .current)
+            }
+        }
     }
 
     func deleteRecurring(_ event: RecurringEvent) {
@@ -91,9 +140,8 @@ final class AgendaDataStore {
         recurringEvents.move(fromOffsets: offsets, toOffset: destination)
     }
 
-    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, decrementRecurrences: Bool = true, calendar: Calendar = .current) {
+    func dailyRefresh(referenceDate: Date, purgePastEvents: Bool, calendar: Calendar = .current) {
         let startOfDay = calendar.startOfDay(for: referenceDate)
-        let previousDay = calendar.date(byAdding: .day, value: -1, to: startOfDay) ?? startOfDay
 
         if purgePastEvents {
             events.removeAll { calendar.startOfDay(for: $0.date) < startOfDay }
@@ -105,22 +153,16 @@ final class AgendaDataStore {
             if let stopCondition = event.stopCondition {
                 switch stopCondition {
                 case let .endDate(date):
-                    if calendar.startOfDay(for: date) < startOfDay {
-                        return nil
+                    // Remove recurring events whose end date is in the past when purgePastEvents (auto-clear) is enabled.
+                    if purgePastEvents {
+                        if calendar.startOfDay(for: date) < startOfDay {
+                            return nil
+                        }
                     }
                 case let .occurrenceCount(remaining):
+                    // Do not auto-decrement occurrence counts in this version. Only remove if count already <= 0.
                     if remaining <= 0 {
                         return nil
-                    }
-
-                    if decrementRecurrences {
-                        if event.occurs(on: previousDay, calendar: calendar) {
-                            let next = max(remaining - 1, 0)
-                            if next == 0 {
-                                return nil
-                            }
-                            updatedEvent.stopCondition = .occurrenceCount(next)
-                        }
                     }
                     // if decrementRecurrences is false, leave remaining unchanged
                 }

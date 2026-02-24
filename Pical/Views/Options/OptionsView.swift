@@ -39,6 +39,11 @@ struct OptionsView: View {
                     Toggle("Compact view", isOn: $compactLayout)
                         .toggleStyle(.switch)
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
+
+                    @AppStorage(SettingsKeys.themeEnabled) var themeEnabled = false
+                    Toggle("Use Pical theme", isOn: $themeEnabled)
+                        .toggleStyle(.switch)
+                        .accessibilityHint("When enabled, Pical uses the custom brand theme colors; otherwise system defaults are used")
                 }
 
                 Section("Notifications") {
@@ -78,17 +83,7 @@ struct OptionsView: View {
                         .toggleStyle(.switch)
                         .accessibilityHint("When enabled, yesterday’s one-off events disappear on the next launch")
 
-                    @AppStorage(SettingsKeys.autoDecrementRecurrences) var autoDecrementRecurrences = true
-                    Toggle("Auto-decrement recurring counts", isOn: Binding(
-                        get: { autoDecrementRecurrences },
-                        set: { autoDecrementRecurrences = $0 }
-                    ))
-                    .toggleStyle(.switch)
-                    .accessibilityHint("When enabled, recurring events with an occurrence count decrement automatically after each occurrence")
 
-                    Text("Clearing still happens manually when you disable this toggle.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
 
                 Section("Support & Donations") {
@@ -147,16 +142,23 @@ private struct OptionsLinkRow: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 4) {
-                Label(title, systemImage: systemImage)
-                if let detail {
-                    Text(detail)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                Image(systemName: systemImage)
+                    .foregroundStyle(Theme.accent)
+                    .font(.system(size: 18, weight: .semibold))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                    if let detail {
+                        Text(detail)
+                            .font(.caption)
+                            .foregroundStyle(Theme.textSecondary)
+                    }
                 }
+                Spacer()
             }
+            .padding(.vertical, 6)
         }
-        .tint(.primary)
+        .buttonStyle(.plain)
     }
 }
 

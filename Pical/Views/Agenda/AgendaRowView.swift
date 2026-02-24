@@ -40,6 +40,7 @@ struct AgendaRowView: View {
                             .truncationMode(.tail)
                     } icon: {
                         Image(systemName: "mappin.and.ellipse")
+                        .font(.system(size: 16, weight: .regular))
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
