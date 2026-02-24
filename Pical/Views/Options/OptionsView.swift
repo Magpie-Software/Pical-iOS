@@ -139,14 +139,14 @@ private struct OptionsLinkRow: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Image(systemName: systemImage)
-                    .foregroundColor(Theme.accent)
+                    .foregroundStyle(Theme.accent)
                     .font(.body)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {
                         Text(detail)
                             .font(.caption)
-                            .foregroundColor(Theme.textSecondary)
+                            .foregroundStyle(Theme.textSecondary)
                     }
                 }
                 Spacer()
