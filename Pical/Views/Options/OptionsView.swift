@@ -39,6 +39,11 @@ struct OptionsView: View {
                     Toggle("Compact view", isOn: $compactLayout)
                         .toggleStyle(.switch)
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
+
+                    @AppStorage(SettingsKeys.themeEnabled) var themeEnabled = false
+                    Toggle("Use Pical theme", isOn: $themeEnabled)
+                        .toggleStyle(.switch)
+                        .accessibilityHint("When enabled, Pical uses the custom brand theme colors; otherwise system defaults are used")
                 }
 
                 Section("Notifications") {
