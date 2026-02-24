@@ -34,20 +34,24 @@ struct OptionsView: View {
                         .accessibilityHint("Organize events into Today / This Week / Later buckets")
 
                     Toggle("Group recurring by weekday", isOn: $recurringWeekdayGrouping)
+                        .tint(Theme.splash)
                         .toggleStyle(.switch)
 
                     Toggle("Compact view", isOn: $compactLayout)
+                        .tint(Theme.splash)
                         .toggleStyle(.switch)
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
 
                     @AppStorage(SettingsKeys.themeEnabled) var themeEnabled = false
                     Toggle("Simple theme", isOn: $themeEnabled)
+                        .tint(Theme.splash)
                         .toggleStyle(.switch)
                         .accessibilityHint("When enabled, Pical uses a toned-back simple theme; when off, Pical shows the full visual treatment with richer gradients and splash graphics")
                 }
 
                 Section("Notifications") {
                     Toggle("Agenda reminders", isOn: $agendaNotificationsEnabled)
+                        .tint(Theme.splash)
                     if agendaNotificationsEnabled {
                         DatePicker(
                             "Agenda reminder time",
@@ -61,6 +65,7 @@ struct OptionsView: View {
                     }
 
                     Toggle("Recurring reminders", isOn: $recurringNotificationsEnabled)
+                        .tint(Theme.splash)
                     if recurringNotificationsEnabled {
                         DatePicker(
                             "Recurring reminder time",
@@ -80,6 +85,7 @@ struct OptionsView: View {
 
                 Section("Maintenance") {
                     Toggle("Auto-clear past events", isOn: $autoPurgePastEvents)
+                        .tint(Theme.splash)
                         .toggleStyle(.switch)
                         .accessibilityHint("When enabled, yesterday’s one-off events disappear on the next launch")
 
