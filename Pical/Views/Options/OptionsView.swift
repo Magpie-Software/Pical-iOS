@@ -157,11 +157,16 @@ private struct OptionsLinkRow: View {
     let action: () -> Void
 
     var body: some View {
-        let useGradient = ["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || (systemImage == "list.star" && !Theme.isSimple)
+        // Show a static gradient only when NOT in Simple theme. In Simple theme, use solid BalticBlue (Theme.accent).
+        let useGradient = !Theme.isSimple && (["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || systemImage == "list.star")
 
         Button(action: action) {
             HStack(spacing: 12) {
-                if useGradient { GradientSymbolIcon(systemName: systemImage, size: 20, weight: .semibold, frameSize: 22, animate: false) } else { Image(systemName: systemImage).foregroundStyle(Theme.accent).font(.system(size:20, weight:.semibold)) }
+                if useGradient {
+                    GradientSymbolIcon(systemName: systemImage, size: 20, weight: .semibold, frameSize: 22, animate: false)
+                } else {
+                    Image(systemName: systemImage).foregroundStyle(Theme.accent).font(.system(size:20, weight:.semibold))
+                }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {

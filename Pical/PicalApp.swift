@@ -22,6 +22,8 @@ struct PicalApp: App {
         } else {
             navAppearance.backgroundColor = UIColor.systemBackground
         }
+        // Remove the default hairline / shadow under the large title to make the title block blend with content
+        navAppearance.shadowColor = .clear
         UINavigationBar.appearance().standardAppearance = navAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
     }
