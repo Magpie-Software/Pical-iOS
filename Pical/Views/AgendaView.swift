@@ -26,6 +26,7 @@ struct AgendaView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: presentNewEvent) {
                         Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .semibold))
                     }
                     .accessibilityLabel("Add event")
                 }
