@@ -165,7 +165,10 @@ private struct OptionsLinkRow: View {
                 if useGradient {
                     GradientSymbolIcon(systemName: systemImage, size: 20, weight: .semibold, frameSize: 22, animate: false)
                 } else {
-                    Image(systemName: systemImage).foregroundStyle(Theme.accent).font(.system(size:20, weight:.semibold))
+                    Image(systemName: systemImage)
+                        .foregroundStyle(Theme.accent)
+                        .font(.system(size:20, weight:.semibold))
+                        .frame(width: 22, height: 22)
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
