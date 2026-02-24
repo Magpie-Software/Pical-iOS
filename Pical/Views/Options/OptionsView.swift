@@ -121,7 +121,14 @@ struct OptionsView: View {
                     NavigationLink {
                         AcknowledgmentsView()
                     } label: {
-                        Label("View credits", systemImage: "list.star")
+                        // Acknowledgments icon should also get the gradient treatment (non-animating)
+                        HStack {
+                            Image(systemName: "list.star")
+                                .font(.system(size: 20, weight: .semibold))
+                                .frame(width: 22, height: 22)
+                                .overlay(Theme.headerGradient.mask(Image(systemName: "list.star").font(.system(size: 20, weight: .semibold))))
+                            Text("View credits")
+                        }
                     }
                 }
             }
@@ -148,13 +155,34 @@ private struct OptionsLinkRow: View {
     let detail: String?
     let systemImage: String
     let action: () -> Void
+    @State private var animateGradient = false
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                Image(systemName: systemImage)
-                    .foregroundStyle(Theme.accent)
-                    .font(.system(size: 24, weight: .semibold))
+                // Icon: use a masked gradient that scrolls subtly for Support & Donations rows
+                let baseIcon = Image(systemName: systemImage)
+                    .font(.system(size: 20, weight: .semibold))
+
+                // Ko-fi is wider; force a consistent square frame to keep spacing uniform
+                let iconFrameSize: CGFloat = systemImage == "cup.and.saucer.fill" ? 20 : 22
+
+                baseIcon
+                    .frame(width: iconFrameSize, height: iconFrameSize)
+                    .overlay(
+                        // animate gradient only for donation/support icons
+                        Theme.headerGradient
+                            .frame(width: 80, height: iconFrameSize)
+                            .offset(x: animateGradient ? 40 : -40)
+                            .mask(baseIcon)
+                    )
+                    .onAppear {
+                        if ["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) {
+                            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                                animateGradient = true
+                            }
+                        }
+                    }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                     if let detail {
