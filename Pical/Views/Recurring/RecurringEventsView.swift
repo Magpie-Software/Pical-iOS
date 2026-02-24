@@ -60,7 +60,10 @@ struct RecurringEventsView: View {
         List {
             if groupByWeekday {
                 ForEach(RecurringWeekdaySection.build(from: store.recurringEvents)) { section in
-                    Section(header: Text(section.title)) {
+                    Section(header: Text(section.title)
+                                .font(.headline)
+                                .textCase(.uppercase)
+                                .foregroundStyle(.secondary)) {
                         ForEach(section.events) { event in
                             recurringRow(for: event)
                         }
