@@ -23,13 +23,6 @@ struct OptionsView: View {
         NavigationStack {
             List {
                 Section(header: Text("Display").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
-                    Picker("Appearance", selection: $displayAppearance) {
-                        ForEach(AppearanceMode.allCases) { mode in
-                            Text(mode.label).tag(mode.rawValue)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-
                     Toggle("Smart agenda grouping", isOn: $smartAgendaGrouping)
                         .toggleStyle(.switch)
                         .tint(Theme.splash)
@@ -43,11 +36,6 @@ struct OptionsView: View {
                         .tint(Theme.splash)
                         .toggleStyle(.switch)
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
-
-                    Toggle("Simple theme", isOn: $themeEnabled)
-                        .tint(Theme.splash)
-                        .toggleStyle(.switch)
-                        .accessibilityHint("When enabled, Pical uses a toned-back simple theme; when off, Pical shows the full visual treatment with richer gradients and splash graphics")
                 }
 
                 Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
