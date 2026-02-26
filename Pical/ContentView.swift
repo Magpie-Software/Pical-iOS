@@ -9,13 +9,8 @@ struct ContentView: View {
     @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
     @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
     @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
-    @AppStorage(SettingsKeys.displayAppearance) private var displayAppearanceRaw = AppearanceMode.system.rawValue
 
-    private var preferredColorScheme: ColorScheme? {
-        AppearanceMode(rawValue: displayAppearanceRaw)?.colorScheme
-    }
-
-    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\/.scenePhase) private var scenePhase
 
     var body: some View {
         TabView {
@@ -34,7 +29,6 @@ struct ContentView: View {
                     Label("Options", systemImage: "slider.horizontal.3")
                 }
         }
-        .preferredColorScheme(preferredColorScheme)
         .environment(store)
         .task { await runDailyRefreshIfNeeded() }
         .onChange(of: scenePhase) { phase in
