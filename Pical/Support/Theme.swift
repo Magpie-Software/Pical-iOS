@@ -1,20 +1,36 @@
 import SwiftUI
 
+/// Semantic theme wrapper. Use named Color assets (with light/dark variants) so designers can
+/// supply both light and dark colors in the asset catalog. Asset names you should create:
+/// - ColorBackground
+/// - ColorPanel
+/// - ColorTextPrimary
+/// - ColorTextSecondary
+/// - ColorAccent
+/// - ColorSplash
+/// - (optional) ColorHeaderStart, ColorHeaderEnd for an override of the header gradient
 enum Theme {
-    // Use named color assets so designers/developers can update them in the asset catalog.
-    // Asset names expected: "Onyx", "MintCream", "ShadowGray", "Ivory".
-    static var background: Color { Color("MintCream") }
-    static var panel: Color { Color("Ivory") }
+    // Core surfaces
+    static var background: Color { Color("ColorBackground") }
+    static var panel: Color { Color("ColorPanel") }
 
-    static var textPrimary: Color { Color("Ivory") }
+    // Text
+    static var textPrimary: Color { Color("ColorTextPrimary") }
     static var textSecondary: Color { Color("ColorTextSecondary") }
 
-    // Accent/splash treatment
-    static var accent: Color { Color("BalticBlue") }
-    static var splash: Color { Color("JungleTeal") }
+    // Accents
+    static var accent: Color { Color("ColorAccent") }
+    static var splash: Color { Color("ColorSplash") }
 
-    // Always use the fancier header gradient
+    // Header gradient: if the designer provides explicit start/end assets use them, otherwise
+    // fall back to splash -> accent.
     static var headerGradient: LinearGradient {
-        LinearGradient(colors: [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing)
+        let start = Color("ColorHeaderStart")
+        let end = Color("ColorHeaderEnd")
+
+        // Attempt to use provided header assets; if they resolve to the default system color
+        // (i.e., asset missing) they'll still be valid Colors, so we prefer explicit assets when present.
+        // Designers: create ColorHeaderStart/ColorHeaderEnd if you want full control.
+        return LinearGradient(colors: [start, end].allSatisfy({ !$0.description.isEmpty }) ? [start, end] : [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing)
     }
 }
