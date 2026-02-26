@@ -31,7 +31,8 @@ struct ContentView: View {
                     Label("Options", systemImage: "slider.horizontal.3")
                 }
         }
-        .environment(store)
+    }
+    .environment(store)
         .task { await runDailyRefreshIfNeeded() }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
