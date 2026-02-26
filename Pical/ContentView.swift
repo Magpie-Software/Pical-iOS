@@ -10,7 +10,7 @@ struct ContentView: View {
     @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
     @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
 
-    @Environment(\/.scenePhase) private var scenePhase
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView {
