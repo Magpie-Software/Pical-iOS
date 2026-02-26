@@ -83,6 +83,9 @@ struct AgendaView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.background)
+        .listRowBackground(Theme.panel)
     }
 
     private var sections: [AgendaDisplaySection] {

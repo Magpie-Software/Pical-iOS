@@ -21,7 +21,7 @@ struct OptionsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(header: Text("Display").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Display").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Smart agenda grouping", isOn: $smartAgendaGrouping)
                         .toggleStyle(.switch)
                         .tint(Theme.splash)
@@ -37,7 +37,7 @@ struct OptionsView: View {
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
                 }
 
-                Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Agenda reminders", isOn: $agendaNotificationsEnabled)
                         .tint(Theme.splash)
                     if agendaNotificationsEnabled {
@@ -68,10 +68,10 @@ struct OptionsView: View {
 
                     Text("Notifications only fire on days that actually have events.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Theme.textSecondary)
                 }
 
-                Section(header: Text("Maintenance").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Maintenance").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Auto-clear past events", isOn: $autoPurgePastEvents)
                         .tint(Theme.splash)
                         .toggleStyle(.switch)
@@ -80,7 +80,7 @@ struct OptionsView: View {
 
                 }
 
-                Section(header: Text("Support & Donations").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Support & Donations").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     ForEach(donationLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -88,7 +88,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section(header: Text("Guides & Docs").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Guides & Docs").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     ForEach(guideLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -96,7 +96,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section(header: Text("Feedback & Bug Reports").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Feedback & Bug Reports").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     ForEach(feedbackLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -104,7 +104,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section(header: Text("Acknowledgments").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Acknowledgments").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     NavigationLink {
                         AcknowledgmentsView()
                     } label: {
@@ -119,6 +119,9 @@ struct OptionsView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
+            .listRowBackground(Theme.panel)
             .navigationTitle("Options")
             .navigationBarTitleDisplayMode(.large)
             }
@@ -135,6 +138,7 @@ struct OptionsView: View {
         let startOfDay = calendar.startOfDay(for: date)
         return max(0, min(86_399, date.timeIntervalSince(startOfDay)))
     }
+
 
 
 
