@@ -63,10 +63,9 @@ struct AgendaView: View {
                 }
             }
         }
-        let bg = colorScheme == .light ? Theme.background : Color.clear
-        .background(bg.ignoresSafeArea())
-        .toolbarBackground(bg, for: .navigationBar)
-        .toolbarBackground(bg, for: .tabBar)
+        .background(colorScheme == .light ? Theme.background.ignoresSafeArea() : Color.clear)
+        .toolbarBackground(colorScheme == .light ? Theme.background : Color.clear, for: .navigationBar)
+        .toolbarBackground(colorScheme == .light ? Theme.background : Color.clear, for: .tabBar)
         .alert(textBinding: $store.lastError)
         .onChange(of: store.events) { _ in
             if let selection = selectedEvent, store.event(id: selection.id) == nil {
