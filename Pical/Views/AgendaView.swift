@@ -62,8 +62,8 @@ struct AgendaView: View {
                 }
             }
         }
-        .toolbarBackground(Color("ColorBackground"), for: .navigationBar)
-        .toolbarBackground(Color("ColorBackground"), for: .tabBar)
+        .toolbarBackground(Theme.background, for: .navigationBar)
+        .toolbarBackground(Theme.background, for: .tabBar)
         .alert(textBinding: $store.lastError)
         .onChange(of: store.events) { _ in
             if let selection = selectedEvent, store.event(id: selection.id) == nil {

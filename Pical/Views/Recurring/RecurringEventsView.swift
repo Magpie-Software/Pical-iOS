@@ -54,8 +54,8 @@ struct RecurringEventsView: View {
                     store.addRecurring(newEvent)
                 }
             }
-            .toolbarBackground(Color("ColorBackground"), for: .navigationBar)
-            .toolbarBackground(Color("ColorBackground"), for: .tabBar)
+            .toolbarBackground(Theme.background, for: .navigationBar)
+            .toolbarBackground(Theme.background, for: .tabBar)
         }
     }
 
