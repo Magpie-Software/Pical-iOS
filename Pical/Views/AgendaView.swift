@@ -6,6 +6,7 @@ struct AgendaView: View {
     @State private var selectedEvent: SelectedEvent?
     @AppStorage(SettingsKeys.smartAgendaGrouping) private var smartAgendaGrouping = true
     @State private var selectedOccurrence: EventOccurrence?
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         NavigationStack {
@@ -62,6 +63,9 @@ struct AgendaView: View {
                 }
             }
         }
+        .background(colorScheme == .light ? Theme.background.ignoresSafeArea() : Color.clear)
+        .toolbarBackground(colorScheme == .light ? Theme.background : Color.clear, for: .navigationBar)
+        .toolbarBackground(colorScheme == .light ? Theme.background : Color.clear, for: .tabBar)
         .alert(textBinding: $store.lastError)
         .onChange(of: store.events) { _ in
             if let selection = selectedEvent, store.event(id: selection.id) == nil {
