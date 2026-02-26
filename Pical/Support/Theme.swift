@@ -1,10 +1,6 @@
 import SwiftUI
 
 enum Theme {
-    /// The new toggle is "Simple theme". When that flag is ON we use a toned-back Pical look.
-    /// When it's OFF we show a fancier Pical theme (richer gradient/splash).
-    static var isSimple: Bool { UserDefaults.standard.bool(forKey: SettingsKeys.themeEnabled) }
-
     // Use named color assets so designers/developers can update them in the asset catalog.
     // Asset names expected: "Onyx", "MintCream", "ShadowGray", "Ivory".
     static var background: Color { Color("MintCream") }
@@ -13,18 +9,12 @@ enum Theme {
     static var textPrimary: Color { Color("Ivory") }
     static var textSecondary: Color { Color("ColorTextSecondary") }
 
-    // Accent/splash treatment differs between simple vs. fancy
-    // Keep accent and splash consistent regardless of simple/fancy mode
+    // Accent/splash treatment
     static var accent: Color { Color("BalticBlue") }
     static var splash: Color { Color("JungleTeal") }
 
+    // Always use the fancier header gradient
     static var headerGradient: LinearGradient {
-        if isSimple {
-            // subtler single-color header for simple mode
-            LinearGradient(colors: [Theme.accent, Theme.accent], startPoint: .leading, endPoint: .trailing)
-        } else {
-            // fancier gradient for full theme
-            LinearGradient(colors: [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing)
-        }
+        LinearGradient(colors: [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing)
     }
 }

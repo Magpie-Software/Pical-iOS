@@ -13,7 +13,6 @@ struct OptionsView: View {
     @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
     @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
     @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
-    @AppStorage(SettingsKeys.themeEnabled) private var themeEnabled = false
 
     private let donationLinks = OptionsLink.samples
     private let guideLinks = GuideLink.samples
@@ -138,6 +137,7 @@ struct OptionsView: View {
     }
 
 
+
 private struct OptionsLinkRow: View {
     let title: String
     let detail: String?
@@ -146,7 +146,7 @@ private struct OptionsLinkRow: View {
 
     var body: some View {
         // Show a static gradient only when NOT in Simple theme. In Simple theme, use solid BalticBlue (Theme.accent).
-        let useGradient = !Theme.isSimple && (["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || systemImage == "list.star")
+        let useGradient = ([("cup.and.saucer.fill"), ("wand.and.stars"), ("mug.fill")].contains(systemImage) || systemImage == "list.star")
         let iconSize: CGFloat = 20
         let iconFrame: CGFloat = 22
 
