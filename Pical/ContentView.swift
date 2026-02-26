@@ -13,7 +13,9 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        TabView {
+        ZStack {
+            Theme.background.ignoresSafeArea()
+            TabView {
             AgendaView(store: agendaStore)
                 .tabItem {
                     Label("Agenda", systemImage: "list.bullet.rectangle")
