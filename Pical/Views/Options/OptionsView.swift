@@ -113,7 +113,7 @@ struct OptionsView: View {
                             Image(systemName: "list.star")
                                 .font(.system(size: 20, weight: .semibold))
                                 .frame(width: 22, height: 22)
-                                .overlay(Theme.headerGradient.mask(Image(systemName: "list.star").font(.system(size: 20, weight: .semibold))))
+                                .overlay(LinearGradient(colors: [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing).mask(Image(systemName: "list.star").font(.system(size: 20, weight: .semibold))))
                             Text("View credits")
                         }
                     }
@@ -247,7 +247,7 @@ private struct GradientSymbolIcon: View {
 
             // Use a wider gradient when animate==true to give a bit more visual depth,
             // but render it statically (no offset animation).
-            Theme.headerGradient
+            LinearGradient(colors: [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing)
                 .frame(width: animate ? frameSize * 3 : frameSize, height: frameSize)
                 .mask(symbol)
                 .drawingGroup()
