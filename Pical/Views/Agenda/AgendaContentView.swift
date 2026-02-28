@@ -38,12 +38,14 @@ struct AgendaContentView: View {
             }
             .sheet(item: $selectedEvent) { event in
                 EventDetailView(eventID: event.id)
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.large])
+                    .presentationBackgroundInteraction(.enabled)
             }
             .sheet(item: $editingEvent) { event in
                 EventFormView(event: event) { updated in
                     store.updateEvent(updated)
                 }
+                .presentationDetents([.medium, .large])
             }
             .sheet(isPresented: $isPresentingNewEvent) {
                 EventFormView(event: nil) { newEvent in
