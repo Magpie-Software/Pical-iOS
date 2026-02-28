@@ -37,14 +37,6 @@ struct OptionsView: View {
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
                 }
 
-                Section(header: Text("Usage").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
-                    NavigationLink {
-                        UsageGuideView()
-                    } label: {
-                        HStack { Image(systemName: "book.closed.fill"); Text("Usage guide") }
-                    }
-                }
-
                 Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Agenda reminders", isOn: $agendaNotificationsEnabled)
                         .tint(Theme.splash)
@@ -98,8 +90,33 @@ struct OptionsView: View {
 
                 Section(header: Text("Guides & Docs").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     ForEach(guideLinks) { link in
-                        OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
-                            openURL(link.url)
+                        if link.title == "Usage guide" {
+                            NavigationLink {
+                                UsageGuideView()
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: link.icon)
+                                        .foregroundStyle(Theme.accent)
+                                        .font(.system(size: 20, weight:.semibold))
+                                        .frame(width: 22, height: 22)
+                                        .padding(.leading, 2)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(link.title)
+                                        if let detail = link.detail {
+                                            Text(detail)
+                                                .font(.caption)
+                                                .foregroundStyle(Theme.textSecondary)
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.vertical, 4)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
+                                openURL(link.url)
+                            }
                         }
                     }
                 }
