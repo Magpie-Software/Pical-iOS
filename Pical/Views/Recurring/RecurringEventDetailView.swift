@@ -19,26 +19,29 @@ struct RecurringEventDetailView: View {
                     Section("Pattern") {
                         Text(event.pattern.description)
                             .font(.headline)
+                            .foregroundStyle(Theme.accent)
                         if let stop = event.stopCondition {
                             Text(stop.description)
                                 .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(Color("ColorTextPrimary"))
                         } else {
                             Text("No end date")
                                 .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(Color("ColorTextPrimary"))
                         }
                     }
 
                     if let location = event.location, !location.isEmpty {
                         Section("Location") {
                             Text(location)
+                                .foregroundColor(Color("ColorTextPrimary"))
                         }
                     }
 
                     if let notes = event.notes, !notes.isEmpty {
                         Section("Notes") {
                             Text(notes)
+                                .foregroundColor(Color("ColorTextPrimary"))
                         }
                     }
 
@@ -47,12 +50,14 @@ struct RecurringEventDetailView: View {
                             store.duplicateRecurring(event)
                         } label: {
                             Label("Duplicate", systemImage: "plus.square.on.square")
+                                .foregroundStyle(Theme.splash)
                         }
 
                         Button(role: .destructive) {
                             isConfirmingDeletion = true
                         } label: {
                             Label("Delete", systemImage: "trash")
+                                .foregroundStyle(Theme.splash)
                         }
                     }
                 }

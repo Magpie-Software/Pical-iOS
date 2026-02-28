@@ -14,9 +14,11 @@ struct AgendaEventDetailView: View {
                 Section("Date") {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(dateFormatter.string(from: event.timestamp))
+                            .foregroundColor(Color("ColorTextPrimary"))
                             .foregroundStyle(.secondary)
                         if let timeDescription = timeDescription {
                             Text(timeDescription)
+                                .foregroundColor(Color("ColorTextPrimary"))
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -25,12 +27,14 @@ struct AgendaEventDetailView: View {
                 if let location = event.location, !location.isEmpty {
                     Section("Location") {
                         Text(location)
+                            .foregroundColor(Color("ColorTextPrimary"))
                     }
                 }
 
                 if let notes = event.notes, !notes.isEmpty {
                     Section("Notes") {
                         Text(notes)
+                            .foregroundColor(Color("ColorTextPrimary"))
                     }
                 }
 
@@ -39,6 +43,7 @@ struct AgendaEventDetailView: View {
                         if let onDuplicate {
                             Button(action: onDuplicate) {
                                 Label("Duplicate", systemImage: "plus.square.on.square")
+                                    .foregroundStyle(Theme.splash)
                             }
                         }
 
@@ -48,6 +53,7 @@ struct AgendaEventDetailView: View {
                                 dismiss()
                             }) {
                                 Label("Delete", systemImage: "trash")
+                                    .foregroundStyle(Theme.splash)
                             }
                         }
                     }
@@ -64,6 +70,7 @@ struct AgendaEventDetailView: View {
                     }
                 }
             }
+            .background(Theme.background)
         }
     }
 
