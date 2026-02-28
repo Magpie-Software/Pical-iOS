@@ -97,13 +97,13 @@ struct RecurringEventFormView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Details") {
+                Section(header: Text("Details").font(.headline)) {
                     TextField("Title", text: $title)
                     TextField("Location", text: $location)
                     TextField("Notes", text: $notes, axis: .vertical)
                 }
 
-                Section("Pattern") {
+                Section(header: Text("Pattern").font(.headline)) {
                     Picker("Repeat", selection: $patternMode) {
                         ForEach(PatternMode.allCases) { mode in
                             Text(mode.label).tag(mode)
@@ -131,7 +131,7 @@ struct RecurringEventFormView: View {
                         }
                     case .monthlyDate:
                         Picker("Day of month", selection: $monthDay) {
-                            ForEach(1...31, id: \.self) { day in
+                            ForEach(1...31, id: \\.self) { day in
                                 Text(day.ordinalString).tag(day)
                             }
                         }
@@ -139,7 +139,7 @@ struct RecurringEventFormView: View {
                     }
                 }
 
-                Section("Stop condition") {
+                Section(header: Text("Stop condition").font(.headline)) {
                     Picker("Ends", selection: $stopSelection) {
                         ForEach(RecurringStopSelection.allCases) { option in
                             Text(option.label).tag(option)
@@ -155,7 +155,7 @@ struct RecurringEventFormView: View {
                     case .occurrenceCount:
                         VStack(alignment: .leading) {
                             Picker("Occurrences", selection: $occurrenceCount) {
-                                ForEach(1...60, id: \.self) { count in
+                                ForEach(1...60, id: \\.self) { count in
                                     Text(count.ordinalString).tag(count)
                                 }
                             }
@@ -191,6 +191,9 @@ struct RecurringEventFormView: View {
                     .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
+            .listRowBackground(Theme.panel)
         }
     }
 

@@ -19,7 +19,7 @@ struct EventFormView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Details") {
+                Section(header: Text("Details").font(.headline)) {
                     TextField("Title", text: $draft.title)
                     TextField("Location", text: Binding(
                         get: { draft.location ?? "" },
@@ -31,7 +31,7 @@ struct EventFormView: View {
                     ), axis: .vertical)
                 }
 
-                Section("Timing") {
+                Section(header: Text("Timing").font(.headline)) {
                     Toggle("Include time", isOn: $draft.includesTime)
                         .onChange(of: draft.includesTime) { _, includesTime in
                             if !includesTime {
@@ -85,6 +85,9 @@ struct EventFormView: View {
                     .disabled(draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
+            .listRowBackground(Theme.panel)
         }
     }
 }

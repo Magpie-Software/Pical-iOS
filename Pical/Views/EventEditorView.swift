@@ -23,7 +23,7 @@ struct EventEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Details") {
+                Section(header: Text("Details").font(.headline)) {
                     TextField("Title", text: $draft.title)
 
                     if draft.includesTime {
@@ -42,7 +42,7 @@ struct EventEditorView: View {
                 }
 
                 if mode == .edit {
-                    Section {
+                    Section(header: Text("")) {
                         Button(role: .destructive) { deleteDraft() } label: {
                             Label("Delete event", systemImage: "trash")
                         }
@@ -65,6 +65,9 @@ struct EventEditorView: View {
                 let calendar = Calendar.current
                 draft.timestamp = calendar.startOfDay(for: draft.timestamp)
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
+            .listRowBackground(Theme.panel)
         }
     }
 
