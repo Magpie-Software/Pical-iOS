@@ -81,6 +81,9 @@ struct RecurringEventDetailView: View {
                     }
                     Button("Cancel", role: .cancel) { }
                 }
+                .scrollContentBackground(.hidden)
+                .background(Theme.background)
+                .listRowBackground(Theme.panel)
             } else {
                 ContentUnavailableView(
                     "Recurring event removed",

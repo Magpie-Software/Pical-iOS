@@ -69,7 +69,9 @@ struct AgendaEventDetailView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
             .background(Theme.background)
+            .listRowBackground(Theme.panel)
         }
     }
 
