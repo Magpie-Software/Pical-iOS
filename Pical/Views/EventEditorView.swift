@@ -34,6 +34,7 @@ struct EventEditorView: View {
 
                     Toggle("Include time", isOn: $draft.includesTime)
                         .toggleStyle(.switch)
+                        .tint(Theme.splash)
 
                     TextField("Location", text: Binding($draft.location))
                         .textContentType(.location)

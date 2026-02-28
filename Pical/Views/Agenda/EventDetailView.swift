@@ -72,6 +72,8 @@ struct EventDetailView: View {
                     EventFormView(event: event) { updatedEvent in
                         store.updateEvent(updatedEvent)
                     }
+                    .presentationDetents([.medium, .large])
+                    .presentationBackgroundInteraction(.enabled)
                 }
                 .confirmationDialog("Delete this event?", isPresented: $isConfirmingDeletion, titleVisibility: .visible) {
                     Button("Delete", role: .destructive) {

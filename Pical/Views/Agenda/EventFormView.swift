@@ -33,6 +33,7 @@ struct EventFormView: View {
 
                 Section(header: Text("Timing").font(.headline)) {
                     Toggle("Include time", isOn: $draft.includesTime)
+                        .tint(Theme.splash)
                         .onChange(of: draft.includesTime) { _, includesTime in
                             if !includesTime {
                                 hasEndTime = false
