@@ -9,16 +9,13 @@ struct ContentView: View {
     @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
     @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
     @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
-    @AppStorage(SettingsKeys.displayAppearance) private var displayAppearanceRaw = AppearanceMode.system.rawValue
-
-    private var preferredColorScheme: ColorScheme? {
-        AppearanceMode(rawValue: displayAppearanceRaw)?.colorScheme
-    }
 
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        TabView {
+        ZStack {
+            Theme.background.ignoresSafeArea()
+            TabView {
             AgendaView(store: agendaStore)
                 .tabItem {
                     Label("Agenda", systemImage: "list.bullet.rectangle")
@@ -34,8 +31,8 @@ struct ContentView: View {
                     Label("Options", systemImage: "slider.horizontal.3")
                 }
         }
-        .preferredColorScheme(preferredColorScheme)
-        .environment(store)
+    }
+    .environment(store)
         .task { await runDailyRefreshIfNeeded() }
         .onChange(of: scenePhase) { phase in
             if phase == .active {

@@ -13,7 +13,6 @@ struct OptionsView: View {
     @AppStorage(SettingsKeys.recurringNotificationsEnabled) private var recurringNotificationsEnabled = false
     @AppStorage(SettingsKeys.agendaNotificationTime) private var agendaNotificationTime: Double = DefaultTimes.agenda
     @AppStorage(SettingsKeys.recurringNotificationTime) private var recurringNotificationTime: Double = DefaultTimes.recurring
-    @AppStorage(SettingsKeys.themeEnabled) private var themeEnabled = false
 
     private let donationLinks = OptionsLink.samples
     private let guideLinks = GuideLink.samples
@@ -22,14 +21,7 @@ struct OptionsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(header: Text("Display").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
-                    Picker("Appearance", selection: $displayAppearance) {
-                        ForEach(AppearanceMode.allCases) { mode in
-                            Text(mode.label).tag(mode.rawValue)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-
+                Section(header: Text("Display").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Smart agenda grouping", isOn: $smartAgendaGrouping)
                         .toggleStyle(.switch)
                         .tint(Theme.splash)
@@ -43,14 +35,9 @@ struct OptionsView: View {
                         .tint(Theme.splash)
                         .toggleStyle(.switch)
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
-
-                    Toggle("Simple theme", isOn: $themeEnabled)
-                        .tint(Theme.splash)
-                        .toggleStyle(.switch)
-                        .accessibilityHint("When enabled, Pical uses a toned-back simple theme; when off, Pical shows the full visual treatment with richer gradients and splash graphics")
                 }
 
-                Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Agenda reminders", isOn: $agendaNotificationsEnabled)
                         .tint(Theme.splash)
                     if agendaNotificationsEnabled {
@@ -81,10 +68,10 @@ struct OptionsView: View {
 
                     Text("Notifications only fire on days that actually have events.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Theme.textSecondary)
                 }
 
-                Section(header: Text("Maintenance").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Maintenance").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Auto-clear past events", isOn: $autoPurgePastEvents)
                         .tint(Theme.splash)
                         .toggleStyle(.switch)
@@ -93,7 +80,7 @@ struct OptionsView: View {
 
                 }
 
-                Section(header: Text("Support & Donations").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Support & Donations").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     ForEach(donationLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -101,7 +88,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section(header: Text("Guides & Docs").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Guides & Docs").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     ForEach(guideLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -109,7 +96,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section(header: Text("Feedback & Bug Reports").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Feedback & Bug Reports").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     ForEach(feedbackLinks) { link in
                         OptionsLinkRow(title: link.title, detail: link.detail, systemImage: link.icon) {
                             openURL(link.url)
@@ -117,7 +104,7 @@ struct OptionsView: View {
                     }
                 }
 
-                Section(header: Text("Acknowledgments").font(.headline).textCase(.uppercase).foregroundStyle(.secondary)) {
+                Section(header: Text("Acknowledgments").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     NavigationLink {
                         AcknowledgmentsView()
                     } label: {
@@ -126,12 +113,15 @@ struct OptionsView: View {
                             Image(systemName: "list.star")
                                 .font(.system(size: 20, weight: .semibold))
                                 .frame(width: 22, height: 22)
-                                .overlay(Theme.headerGradient.mask(Image(systemName: "list.star").font(.system(size: 20, weight: .semibold))))
+                                .overlay(LinearGradient(colors: [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing).mask(Image(systemName: "list.star").font(.system(size: 20, weight: .semibold))))
                             Text("View credits")
                         }
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
+            .listRowBackground(Theme.panel)
             .navigationTitle("Options")
             .navigationBarTitleDisplayMode(.large)
             }
@@ -150,6 +140,8 @@ struct OptionsView: View {
     }
 
 
+
+
 private struct OptionsLinkRow: View {
     let title: String
     let detail: String?
@@ -158,7 +150,7 @@ private struct OptionsLinkRow: View {
 
     var body: some View {
         // Show a static gradient only when NOT in Simple theme. In Simple theme, use solid BalticBlue (Theme.accent).
-        let useGradient = !Theme.isSimple && (["cup.and.saucer.fill", "wand.and.stars", "mug.fill"].contains(systemImage) || systemImage == "list.star")
+        let useGradient = ([("cup.and.saucer.fill"), ("wand.and.stars"), ("mug.fill")].contains(systemImage) || systemImage == "list.star")
         let iconSize: CGFloat = 20
         let iconFrame: CGFloat = 22
 
@@ -259,7 +251,7 @@ private struct GradientSymbolIcon: View {
 
             // Use a wider gradient when animate==true to give a bit more visual depth,
             // but render it statically (no offset animation).
-            Theme.headerGradient
+            LinearGradient(colors: [Theme.splash, Theme.accent], startPoint: .leading, endPoint: .trailing)
                 .frame(width: animate ? frameSize * 3 : frameSize, height: frameSize)
                 .mask(symbol)
                 .drawingGroup()

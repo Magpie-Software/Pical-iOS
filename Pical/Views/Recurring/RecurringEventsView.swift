@@ -64,7 +64,7 @@ struct RecurringEventsView: View {
                     Section(header: Text(section.title)
                                 .font(.headline)
                                 .textCase(.uppercase)
-                                .foregroundStyle(.secondary)) {
+                                .foregroundStyle(Theme.textSecondary)) {
                         ForEach(section.events) { event in
                             recurringRow(for: event)
                         }
@@ -84,6 +84,9 @@ struct RecurringEventsView: View {
         }
         .environment(\.editMode, $editMode)
         .applyRecurringListStyle(groupByWeekday)
+        .scrollContentBackground(.hidden)
+        .background(Theme.background)
+        .listRowBackground(Theme.panel)
     }
 
     private func recurringRow(for event: RecurringEvent) -> some View {
