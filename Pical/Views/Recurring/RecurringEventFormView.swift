@@ -131,7 +131,7 @@ struct RecurringEventFormView: View {
                         }
                     case .monthlyDate:
                         Picker("Day of month", selection: $monthDay) {
-                            ForEach(1...31, id: \\.self) { day in
+                            ForEach(Array(1...31), id: \.self) { day in
                                 Text(day.ordinalString).tag(day)
                             }
                         }
@@ -155,7 +155,7 @@ struct RecurringEventFormView: View {
                     case .occurrenceCount:
                         VStack(alignment: .leading) {
                             Picker("Occurrences", selection: $occurrenceCount) {
-                                ForEach(1...60, id: \\.self) { count in
+                                ForEach(Array(1...60), id: \.self) { count in
                                     Text(count.ordinalString).tag(count)
                                 }
                             }
