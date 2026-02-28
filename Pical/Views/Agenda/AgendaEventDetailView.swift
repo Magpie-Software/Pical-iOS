@@ -11,7 +11,7 @@ struct AgendaEventDetailView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Date") {
+                Section(header: Text("Date").font(.headline)) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(dateFormatter.string(from: event.timestamp))
                             .foregroundColor(Color("ColorTextPrimary"))
@@ -25,21 +25,21 @@ struct AgendaEventDetailView: View {
                 }
 
                 if let location = event.location, !location.isEmpty {
-                    Section("Location") {
+                    Section(header: Text("Location").font(.headline)) {
                         Text(location)
                             .foregroundColor(Color("ColorTextPrimary"))
                     }
                 }
 
                 if let notes = event.notes, !notes.isEmpty {
-                    Section("Notes") {
+                    Section(header: Text("Notes").font(.headline)) {
                         Text(notes)
                             .foregroundColor(Color("ColorTextPrimary"))
                     }
                 }
 
                 if onDuplicate != nil || onDelete != nil {
-                    Section("Quick actions") {
+                    Section(header: Text("Quick actions").font(.headline)) {
                         if let onDuplicate {
                             Button(action: onDuplicate) {
                                 Label("Duplicate", systemImage: "plus.square.on.square")
@@ -53,7 +53,6 @@ struct AgendaEventDetailView: View {
                                 dismiss()
                             }) {
                                 Label("Delete", systemImage: "trash")
-                                    .foregroundStyle(Theme.splash)
                             }
                         }
                     }

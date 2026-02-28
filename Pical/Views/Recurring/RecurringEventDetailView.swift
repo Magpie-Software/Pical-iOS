@@ -16,7 +16,7 @@ struct RecurringEventDetailView: View {
         NavigationStack {
             if let event {
                 List {
-                    Section("Pattern") {
+                    Section(header: Text("Pattern").font(.headline)) {
                         Text(event.pattern.description)
                             .font(.headline)
                             .foregroundStyle(Theme.accent)
@@ -32,20 +32,20 @@ struct RecurringEventDetailView: View {
                     }
 
                     if let location = event.location, !location.isEmpty {
-                        Section("Location") {
+                        Section(header: Text("Location").font(.headline)) {
                             Text(location)
                                 .foregroundColor(Color("ColorTextPrimary"))
                         }
                     }
 
                     if let notes = event.notes, !notes.isEmpty {
-                        Section("Notes") {
+                        Section(header: Text("Notes").font(.headline)) {
                             Text(notes)
                                 .foregroundColor(Color("ColorTextPrimary"))
                         }
                     }
 
-                    Section("Quick actions") {
+                    Section(header: Text("Quick actions").font(.headline)) {
                         Button {
                             store.duplicateRecurring(event)
                         } label: {
@@ -57,7 +57,6 @@ struct RecurringEventDetailView: View {
                             isConfirmingDeletion = true
                         } label: {
                             Label("Delete", systemImage: "trash")
-                                .foregroundStyle(Theme.splash)
                         }
                     }
                 }
