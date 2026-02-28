@@ -37,6 +37,14 @@ struct OptionsView: View {
                         .accessibilityHint("Hide secondary fields like locations and notes in list rows")
                 }
 
+                Section(header: Text("Usage").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
+                    NavigationLink {
+                        UsageGuideView()
+                    } label: {
+                        HStack { Image(systemName: "book.closed.fill"); Text("Usage guide") }
+                    }
+                }
+
                 Section(header: Text("Notifications").font(.headline).textCase(.uppercase).foregroundStyle(Theme.textSecondary)) {
                     Toggle("Agenda reminders", isOn: $agendaNotificationsEnabled)
                         .tint(Theme.splash)
